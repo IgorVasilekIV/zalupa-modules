@@ -8,7 +8,7 @@ class okak(loader.Module):
     """окак для @MrAmigoch"""
 
     strings = {
-        "name": "окак"
+        "name": "окак для @MrAmigoch"
     }
 
     async def okakcmd(self, m):
