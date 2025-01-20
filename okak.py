@@ -4,8 +4,8 @@
 from .. import loader, utils
 
 @loader.tds
-class okakMod(loader.Module):
-    """окак"""
+class okak(loader.Module):
+    """окак для @MrAmigoch"""
 
     strings = {
         "name": "окак"
@@ -16,7 +16,7 @@ class okakMod(loader.Module):
         await utils.asyncio.sleep(1)
         self.db.set("okak", "on", not self.db.get("okak", "on", False))
         if self.db.get("okak", "on", False):
-            await m.edit("<emoji document_id=5211078941153974712>😨</emoji>okak ACTIVATED")
+            await m.edit("<emoji document_id=5211078941153974712>😨</emoji>ACTIVATED")
 
     async def watcher(self, m):
         if self.db.get("okak", "on", False) and m.out:
