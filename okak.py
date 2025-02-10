@@ -1,7 +1,7 @@
 # чатгпт кормит, больные мозги тоже
 #
 # meta banner: https://0x0.st/s/gJtVZxi43-Zy4q2je-yx-A/8XdP.gif
-# meta developer: @IgorVasilekIV
+# meta developer: @Hikka_ZPM
 #
 # The module is made as a joke, all coincidences are random :P
 # 
