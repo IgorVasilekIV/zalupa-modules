@@ -1,3 +1,6 @@
+# meta developer: @MrAmigoch for @HikkaZPM
+#
+#
 import hikkatl
 
 import random
