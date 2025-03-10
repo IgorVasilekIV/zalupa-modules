@@ -1,2 +1,1 @@
-**ZPM**
-ахуеть модули для хикки?
+Just hikka mods for t.me/HikkaZPM
