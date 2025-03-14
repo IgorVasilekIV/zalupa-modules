@@ -1,6 +1,7 @@
 # чатгпт кормит, больные мозги тоже
 #
-# meta banner: https://files.catbox.moe/nldg9c.jpg
+# meta banner (change) https://files.catbox.moe/nldg9c.jpg
+# meta pic: https://files.catbox.moe/nldg9c.jpg
 # meta developer: @HikkaZPM
 #
 # The module is made as a joke, all coincidences are random :P
