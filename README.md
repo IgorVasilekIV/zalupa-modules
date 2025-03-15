@@ -1,1 +1,1 @@
-Just hikka mods for t.me/HikkaZPM
+Just hikka mods for our channel 
