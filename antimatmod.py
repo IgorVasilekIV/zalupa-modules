@@ -29,7 +29,7 @@ from .. import loader, utils
 
 
 class AntiMatMod(loader.Module):
-    '''Будьте культурным человеком, не материтесь'''
+    '''Будьте культурным человеком, не материтесь, edited by @HikkaZPM'''
 
     strings = {
         "name": "Анти-Мат",
