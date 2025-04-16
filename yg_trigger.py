@@ -21,7 +21,7 @@ import os
 
 @loader.tds
 class yg_trigger(loader.Module):
-    """Триггер-модуль. Документация: kok.gay/trigger (если не работает просите помощи в @hikka_offtop)"""
+    """Триггер-модуль. Документация: kok.gay/trigger (если не работает просите помощи в @hikka_offtop), edited by @HikkaZPM"""
 
     strings = {"name": "yg_trigger"}
 
