@@ -14,7 +14,6 @@
 ██████████████████████████████████████████████████████████████████████████████████
 """
 # meta developer: @xuduk
-# but i(@HikkaZPM) changed it a little
 from .. import loader, utils
 import subprocess
 import traceback
@@ -22,9 +21,9 @@ import shutil
 
 @loader.tds
 class UwufetchMod(loader.Module):
-    """Модуль для простого запуска Uwufetch."""
+    """Модуль для простого запуска Uwufetch, edited by @HikkaZPM"""
     strings = {
-        "name": "Uwufetch(potato)"
+        "name": "Uwufetch"
     }
 
     @loader.command()
