@@ -1,3 +1,6 @@
+"""
+ARCHIVED
+"""
 # чатгпт кормит, больные мозги тоже
 #
 # meta banner (change) https://files.catbox.moe/nldg9c.jpg
