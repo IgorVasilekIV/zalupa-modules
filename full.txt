@@ -1,6 +1,5 @@
-SSend
-UD
-ZPMinstaller
+ssend
+ud
 bootanim
 femboy
 okak
