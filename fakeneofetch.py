@@ -7,7 +7,6 @@
 from .. import loader, utils
 from telethon import events
 import asyncio
-import random
 import logging
 import platform
 import os
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 # Определяем класс модуля
 @loader.tds
-class FNeoMod(loader.Module):
+class FakeNeofetchMod(loader.Module):
     """Имитация neofetch с лого"""
     
     strings = {
@@ -28,28 +27,27 @@ class FNeoMod(loader.Module):
         "custom_host_reset": "<b>Кастомный хост сброшен до стандартного</b>",
     }
     
-    # Конфигурация по умолчанию
     def __init__(self):
         self.config = loader.ModuleConfig(
-            "CUSTOM_HOST", "Arch Linux", "Кастомный хост для отображения",
+            "CUSTOM_OS", "Arch Linux", "Кастомный хост для отображения",
+            "CUSTOM_HOSTNAME", "archbtw", "Кастомный хостнейм для отображения",
             "CUSTOM_USER", "root", "Кастомное имя пользователя",
             "CUSTOM_KERNEL", "Linux 6.2.0-arch1", "Кастомное ядро",
             "CUSTOM_UPTIME", "69 days, 4 hours, 20 minutes", "Кастомное время работы",
             "CUSTOM_PACKAGES", "1337", "Кастомное количество пакетов",
-            "CUSTOM_SHELL", "fish", "Кастомная оболочка",
-            "CUSTOM_RESOLUTION", "3840x2160", "Кастомное разрешение",
-            "CUSTOM_DE", "hyprland", "Кастомное окружение рабочего стола",
-            "CUSTOM_THEME", "Dracula", "Кастомная тема",
+            #"CUSTOM_SHELL", "fish", "Кастомная оболочка",
+            #"CUSTOM_RESOLUTION", "3840x2160", "Кастомное разрешение",
+            #"CUSTOM_DE", "hyprland", "Кастомное окружение рабочего стола",
+            #"CUSTOM_THEME", "Dracula", "Кастомная тема",
             "CUSTOM_CPU", "AMD Ryzen 9 7950X", "Кастомный процессор",
-            "CUSTOM_GPU", "NVIDIA RTX 4090", "Кастомная видеокарта",
+            #"CUSTOM_GPU", "NVIDIA RTX 4090", "Кастомная видеокарта",
             "CUSTOM_MEMORY", "64GB / 128GB", "Кастомная память (использовано / всего)",
             "ENABLE_DELAY", True, "Включить задержку перед выводом",
-            "DELAY", "1.5", "Задержка перед выводом (секунды окда)"
+            "DELAY", "1.5", "Задержка перед выводом (секунды окда)",
             "SHOW_COLORS", False, "Показывать цветовую схему",
             "BREAK", "--------------------------" "Разбивка на строки"
         )
     
-    # Асинхронная функция инициализации
     async def client_ready(self, client, db):
         """Вызывается при готовности клиента"""
         self._client = client
@@ -57,7 +55,7 @@ class FNeoMod(loader.Module):
         self._me = await client.get_me()
     
     @loader.command(ru_doc="Показать фейковый neofetch с кастомным хостом")
-    async def fakeneofetch(self, message):
+    async def fneo(self, message):
         """Показывает фейковый вывод neofetch с кастомным хостом"""
         msg = await utils.answer(message, self.strings["loading"])
         
@@ -68,8 +66,7 @@ class FNeoMod(loader.Module):
         
         # По желанию замените на свой (добавлю в TODO чтобы можно было выбрать ОС)
         logo = """
-<pre>
-                   -`                    
+<pre>                   -`                    
                   .o+`                   
                  `ooo/                   
                 `+oooo:                  
@@ -91,18 +88,22 @@ class FNeoMod(loader.Module):
 """
         
         system_info = f"""
-{self.config['CUSTOM_USER']}@{self.config['CUSTOM_HOST']}
+{self.config['CUSTOM_USER']}@{self.config['CUSTOM_HOSTNAME']}
 {self.config['BREAK']}
-OS: {self.config['CUSTOM_HOST']}
+OS: {self.config['CUSTOM_OS']}
 Kernel: {self.config['CUSTOM_KERNEL']}
 Uptime: {self.config['CUSTOM_UPTIME']}
 Packages: {self.config['CUSTOM_PACKAGES']}
-Shell: {self.config['CUSTOM_SHELL']}
-Resolution: {self.config['CUSTOM_RESOLUTION']}
-DE: {self.config['CUSTOM_DE']}
-Theme: {self.config['CUSTOM_THEME']}
+"""
+#Shell: {self.config['CUSTOM_SHELL']}
+#Resolution: {self.config['CUSTOM_RESOLUTION']}
+#DE: {self.config['CUSTOM_DE']}
+#Theme: {self.config['CUSTOM_THEME']}
+"""
 CPU: {self.config['CUSTOM_CPU']}
-GPU: {self.config['CUSTOM_GPU']}
+"""
+# GPU: {self.config['CUSTOM_GPU']}
+"""
 Memory: {self.config['CUSTOM_MEMORY']}
 """
         
@@ -126,6 +127,7 @@ Colors:
         """Сбрасывает все настройки neofetch до стандартных"""
 
         self.config["CUSTOM_HOST"] = "Arch Linux"
+        self.config["CUSTOM_HOSTNAME"] = "archbtw"
         self.config["CUSTOM_USER"] = "root"
         self.config["CUSTOM_KERNEL"] = "Linux 6.2.0-arch1"
         self.config["CUSTOM_UPTIME"] = "69 days, 4 hours, 20 minutes"
