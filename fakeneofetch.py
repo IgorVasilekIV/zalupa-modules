@@ -63,7 +63,7 @@ class FNeoMod(loader.Module):
         msg = await utils.answer(message, self.strings["loading"])
         
         if self.config["ENABLE_DELAY"]:
-            await asyncio.sleep({self.config['DELAY']})
+            await asyncio.sleep(self.config['DELAY'])
         
         current_time = datetime.now().strftime("%H:%M:%S")
         
