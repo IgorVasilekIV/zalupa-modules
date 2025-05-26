@@ -25,7 +25,6 @@ class FNeoMod(loader.Module):
     strings = {
         "name": "FakeNeofetch",
         "loading": "<b>Загрузка системной информации...</b>",
-        "custom_host_set": "<b>Кастомный хост установлен:</b> {}",
         "custom_host_reset": "<b>Кастомный хост сброшен до стандартного</b>",
     }
     
@@ -46,7 +45,7 @@ class FNeoMod(loader.Module):
             "CUSTOM_MEMORY", "64GB / 128GB", "Кастомная память (использовано / всего)",
             "ENABLE_DELAY", True, "Включить задержку перед выводом",
             "DELAY", "1.5", "Задержка перед выводом (секунды окда)"
-            "SHOW_COLORS", True, "Показывать цветовую схему",
+            "SHOW_COLORS", False, "Показывать цветовую схему",
             "BREAK", "--------------------------" "Разбивка на строки"
         )
     
@@ -69,6 +68,7 @@ class FNeoMod(loader.Module):
         
         # По желанию замените на свой (добавлю в TODO чтобы можно было выбрать ОС)
         logo = """
+<pre>
                    -`                    
                   .o+`                   
                  `ooo/                   
@@ -119,12 +119,12 @@ Colors:
         execution_time = f"\n<code>Выполнено за {self.config['DELAY']} секунд.</code>"
         output += execution_time
 
-        await utils.answer(msg, self.strings["done"] + output)
-
+        await utils.answer(msg, output + "</pre>")
+        
     @loader.command(ru_doc="Сбросить все настройки до стандартных")
     async def resetneofetch(self, message):
         """Сбрасывает все настройки neofetch до стандартных"""
-        # Сбрасываем настройки
+
         self.config["CUSTOM_HOST"] = "Arch Linux"
         self.config["CUSTOM_USER"] = "root"
         self.config["CUSTOM_KERNEL"] = "Linux 6.2.0-arch1"
@@ -137,5 +137,7 @@ Colors:
         self.config["CUSTOM_CPU"] = "AMD Ryzen 9 7950X"
         self.config["CUSTOM_GPU"] = "NVIDIA RTX 4090"
         self.config["CUSTOM_MEMORY"] = "64GB / 128GB"
+        self.config["BREAK"] = "--------------------------"
+        self.config["DELAY"] = "1.5"
         
         await utils.answer(message, self.strings["custom_host_reset"])
