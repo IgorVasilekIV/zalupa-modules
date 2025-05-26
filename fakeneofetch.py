@@ -116,10 +116,9 @@ Colors:
         
         output = f"{logo}\n{system_info}"
 
-        # Добавляем время выполнения
-        execution_time = f"\n<code>Выполнено за "self.config["DELAY"]" секунд.</code>"
+        execution_time = f"\n<code>Выполнено за {self.config['DELAY']} секунд.</code>"
         output += execution_time
-                
+
         await utils.answer(msg, self.strings["done"] + output)
 
     @loader.command(ru_doc="Сбросить все настройки до стандартных")
