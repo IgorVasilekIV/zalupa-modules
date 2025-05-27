@@ -58,7 +58,7 @@ class FakeNeofetchMod(loader.Module):
         
         system_info = f"""
 {self.config['CUSTOM_USER']}@{self.config['CUSTOM_HOSTNAME']}
---------------------------
+-----------------
 OS: {self.config['CUSTOM_OS']}
 Kernel: {self.config['CUSTOM_KERNEL']}
 Uptime: {self.config['CUSTOM_UPTIME']}
@@ -66,7 +66,7 @@ Packages: {self.config['CUSTOM_PACKAGES']}
 CPU: {self.config['CUSTOM_CPU']}
 Memory: {self.config['CUSTOM_MEMORY']}"""
         
-        output = f"<pre>{system_info}\n\nВыполнено за {self.config['DELAY']} секунд.</pre>"
+        output = f"<pre>{system_info}</pre>\n<b>Выполнено за {self.config['DELAY']} секунд.</b>"
         await utils.answer(msg, output)
         
     @loader.command(ru_doc="Сбросить все настройки до стандартных")
