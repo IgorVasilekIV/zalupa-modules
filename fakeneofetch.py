@@ -33,15 +33,10 @@ class FakeNeofetchMod(loader.Module):
             "CUSTOM_KERNEL", "Linux 6.2.0-arch1", "Кастомное ядро",
             "CUSTOM_UPTIME", "69 days, 4 hours, 20 minutes", "Кастомное время работы",
             "CUSTOM_PACKAGES", "1337", "Кастомное количество пакетов",
-            #"CUSTOM_SHELL", "fish", "Оболочка",
-            #"CUSTOM_RESOLUTION", "3840x2160", "Разрешение экрана",
-            #"CUSTOM_DE", "hyprland", "Окружение рабочего стола",
-            #"CUSTOM_THEME", "Dracula", "Кастомная тема",
             "CUSTOM_CPU", "AMD Ryzen 9 7950X", "Процессор",
-            #"CUSTOM_GPU", "NVIDIA RTX 4090", "Видеокарта",
             "CUSTOM_MEMORY", "64GB / 128GB", "Память (использовано / всего)",
             "ENABLE_DELAY", True, "Включить задержку перед выводом",
-            "DELAY", "1.5", "Задержка перед выводом (секунды окда)",
+            "DELAY", "1.5", "Задержка перед выводом (секунды)",
         )
     
     async def client_ready(self, client, db):
@@ -56,9 +51,10 @@ class FakeNeofetchMod(loader.Module):
         msg = await utils.answer(message, self.strings["loading"])
         
         if self.config["ENABLE_DELAY"]:
-            await asyncio.sleep(self.config['DELAY'])
+            await asyncio.sleep(float(self.config['DELAY']))
         
         current_time = datetime.now().strftime("%H:%M:%S")
+
         
         system_info = f"""
 {self.config['CUSTOM_USER']}@{self.config['CUSTOM_HOSTNAME']}
@@ -67,42 +63,22 @@ OS: {self.config['CUSTOM_OS']}
 Kernel: {self.config['CUSTOM_KERNEL']}
 Uptime: {self.config['CUSTOM_UPTIME']}
 Packages: {self.config['CUSTOM_PACKAGES']}
-"""
-#Shell: {self.config['CUSTOM_SHELL']}
-#Resolution: {self.config['CUSTOM_RESOLUTION']}
-#DE: {self.config['CUSTOM_DE']}
-#Theme: {self.config['CUSTOM_THEME']}
-"""
 CPU: {self.config['CUSTOM_CPU']}
-"""
-# GPU: {self.config['CUSTOM_GPU']}
-"""
-Memory: {self.config['CUSTOM_MEMORY']}
-"""
+Memory: {self.config['CUSTOM_MEMORY']}"""
         
-        output = f"{system_info}"
-
-        execution_time = f"\n<code>Выполнено за {self.config['DELAY']} секунд.</code>"
-        output += execution_time
-
-        await utils.answer(msg, output + "</pre>")
+        output = f"<pre>{system_info}\n\nВыполнено за {self.config['DELAY']} секунд.</pre>"
+        await utils.answer(msg, output)
         
     @loader.command(ru_doc="Сбросить все настройки до стандартных")
     async def resetneofetch(self, message):
         """Сбрасывает все настройки neofetch до стандартных"""
-
-        self.config["CUSTOM_HOST"] = "Arch Linux"
+        self.config["CUSTOM_OS"] = "Arch Linux"
         self.config["CUSTOM_HOSTNAME"] = "archbtw"
         self.config["CUSTOM_USER"] = "root"
         self.config["CUSTOM_KERNEL"] = "Linux 6.2.0-arch1"
         self.config["CUSTOM_UPTIME"] = "69 days, 4 hours, 20 minutes"
         self.config["CUSTOM_PACKAGES"] = "1337"
-        self.config["CUSTOM_SHELL"] = "fish"
-        self.config["CUSTOM_RESOLUTION"] = "3840x2160"
-        self.config["CUSTOM_DE"] = "hyprland"
-        self.config["CUSTOM_THEME"] = "Dracula"
         self.config["CUSTOM_CPU"] = "AMD Ryzen 9 7950X"
-        self.config["CUSTOM_GPU"] = "NVIDIA RTX 4090"
         self.config["CUSTOM_MEMORY"] = "64GB / 128GB"
         self.config["DELAY"] = "1.5"
                 
