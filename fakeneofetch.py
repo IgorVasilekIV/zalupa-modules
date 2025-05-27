@@ -45,7 +45,6 @@ class FakeNeofetchMod(loader.Module):
             "ENABLE_DELAY", True, "Включить задержку перед выводом",
             "DELAY", "1.5", "Задержка перед выводом (секунды окда)",
             "SHOW_COLORS", False, "Показывать цветовую схему",
-            "BREAK", "--------------------------" "Разбивка на строки"
         )
     
     async def client_ready(self, client, db):
@@ -89,7 +88,7 @@ class FakeNeofetchMod(loader.Module):
         
         system_info = f"""
 {self.config['CUSTOM_USER']}@{self.config['CUSTOM_HOSTNAME']}
-{self.config['BREAK']}
+--------------------------
 OS: {self.config['CUSTOM_OS']}
 Kernel: {self.config['CUSTOM_KERNEL']}
 Uptime: {self.config['CUSTOM_UPTIME']}
