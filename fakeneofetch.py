@@ -26,6 +26,8 @@ import platform
 import os
 import time
 from datetime import datetime
+import aiohttp
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -136,11 +138,27 @@ class FakeNeofetchMod(loader.Module):
                 doc=lambda: self.strings["_cfg_enable_logo"],
                 validator=loader.validators.Boolean(),
             ),
+            #loader.ConfigValue(
+            #    "logo",
+            #    "https://raw.githubusercontent.com/fastfetch-cli/fastfetch/refs/heads/dev/src/logo/ascii/arch_small.txt",
+            #    doc=lambda: self.strings["_cfg_logo"],
+            #    validator=loader.validators.Link(),
+            #),
             loader.ConfigValue(
-                "logo",
-                "https://raw.githubusercontent.com/fastfetch-cli/fastfetch/refs/heads/dev/src/logo/ascii/arch_small.txt",
+                "logo_style",
+                "arch_small",
                 doc=lambda: self.strings["_cfg_logo"],
-                validator=loader.validators.Link(),
+                validator=loader.validators.Choice([
+                     "arch", "arch_small", "ubuntu", "ubuntu_small",
+                     "debian", "debian_small", "fedora", "fedora_small",
+                     "windows", "android", "macos", "macos_small"
+                ]),
+            ),
+            loader.ConfigValue(
+                "custom_logo_url",
+                "",
+                doc="Кастомный URL логотипа",
+                validator=loader.validators.String(),
             ),
         )
 
@@ -150,28 +168,49 @@ class FakeNeofetchMod(loader.Module):
         self._db = db
         self._me = await client.get_me()
 
+    async def get_logo(self):
+            """Загружает и возвращает логотип"""
+            if self.config["custom_logo_url"]:
+                url = self.config["custom_logo_url"]
+            else:
+                logo_name = self.config["logo_style"]
+                url = f"https://raw.githubusercontent.com/fastfetch-cli/fastfetch/dev/src/logo/ascii/{logo_name}.txt"
+
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, timeout=5) as response:
+                        if response.status == 200:
+                            logo_text = await response.text()
+
+                            cleaned_logo = re.sub(r'\$\d+', '', logo_text)
+
+                            cleaned_lines = [line for line in cleaned_logo.splitlines() if line.strip()]
+
+                            return "\n".join(cleaned_lines)
+
+                        return f"Ошибка загрузки: {response.status}"
+            except Exception as e:
+                return f"Ошибка: {str(e)}"
+
     @loader.command(ru_doc="Показать фейковый neofetch с кастомным хостом")
     async def fneo(self, message):
-        """Показывает фейковый вывод neofetch с кастомным хостом"""
+        """Показывает фейковый вывод neofetch"""
         msg = await utils.answer(message, self.strings["loading"])
 
         if self.config["enable_delay"]:
             await asyncio.sleep(float(self.config['delay']))
 
-        current_time = datetime.now().strftime("%H:%M:%S")
-
+        logo = ""
+        if self.config["enable_logo"]:
+            try:
+                logo = await self.get_logo()
+                logo += "\n\n"
+            except Exception as e:
+                logger.error(f"Error loading logo: {str(e)}")
+                logo = ""
 
         system_info = f"""
-
-          /\
-         /  \
-        /    \
-       /      \
-      /   ,,   \
-     /   |  |   \
-    /_-''    ''-_\
-
-{self.config['user']}@{self.config['hostname']}
+{logo}{self.config['user']}@{self.config['hostname']}
 -----------------
 OS: {self.config['os']}
 Kernel: {self.config['kernel']}
