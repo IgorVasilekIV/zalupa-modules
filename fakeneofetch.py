@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class FakeNeofetchMod(loader.Module):
-    """Имитация neofetch --stdout, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy (да падажите не гатова ещо)"""
+    """Имитация neofetch --stdout, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy"""
 
     strings = {
         "name": "FFetch",
@@ -47,6 +47,8 @@ class FakeNeofetchMod(loader.Module):
         "_cfg_ram": "Custom RAM for display",
         "_cfg_enable_delay": "Enable delay before output",
         "_cfg_delay": "Delay before output in seconds",
+        "_cfg_enable_logo": "Enable logo for display",
+        "_cfg_logo": "Logo for display, must be link for <distro>.txt, for example grab here: https://github.com/fastfetch-cli/fastfetch/tree/dev/src/logo/ascii (better with small version)"
     }
 
     strings_ru = {
@@ -62,6 +64,8 @@ class FakeNeofetchMod(loader.Module):
         "_cfg_cpu": "Кастомный процессор для отображения",
         "_cfg_enable_delay": "Включить задержку перед выводом",
         "_cfg_delay": "Задержка перед выводом в секундах",
+        "_cfg_enable_logo": "Включить логотип для отображения",
+        "_cfg_logo": "Логотип для отображения, должна быть ссылкой на файл <distro>.txt, можете взять здесь: https://github.com/fastfetch-cli/fastfetch/tree/dev/src/logo/ascii (лучше с маленькой версией)",
     }
 
     def __init__(self):
@@ -126,6 +130,18 @@ class FakeNeofetchMod(loader.Module):
                 doc=lambda: self.strings["_cfg_delay"],
                 validator=loader.validators.Float(minimum=0.0, maximum=999999999.0),
             ),
+            loader.ConfigValue(
+                "enable_logo",
+                True,
+                doc=lambda: self.strings["_cfg_enable_logo"],
+                validator=loader.validators.Boolean(),
+            ),
+            loader.ConfigValue(
+                "logo",
+                "https://raw.githubusercontent.com/fastfetch-cli/fastfetch/refs/heads/dev/src/logo/ascii/arch_small.txt",
+                doc=lambda: self.strings["_cfg_logo"],
+                validator=loader.validators.Link(),
+            ),
         )
 
     async def client_ready(self, client, db):
@@ -146,6 +162,15 @@ class FakeNeofetchMod(loader.Module):
 
 
         system_info = f"""
+
+          /\
+         /  \
+        /    \
+       /      \
+      /   ,,   \
+     /   |  |   \
+    /_-''    ''-_\
+
 {self.config['user']}@{self.config['hostname']}
 -----------------
 OS: {self.config['os']}
@@ -172,3 +197,26 @@ Memory: {self.config['ram']}"""
         self.config["delay"] = 1.5
 
         await utils.answer(message, self.strings["custom_host_reset"])
+
+
+"""
+                  -`
+                 .o+`
+                `ooo/
+               `+oooo:
+              `+oooooo:
+              -+oooooo+:
+            `/:-:++oooo+:
+           `/++++/+++++++:
+          `/++++++++++++++:
+         `/+++ooooooooooooo/`
+        ./ooosssso++osssssso+`
+       .oossssso-````/ossssss+`
+      -osssssso.      :ssssssso.
+     :osssssss/        osssso+++.
+    /ossssssss/        +ssssooo/-
+  `/ossssso+/:-        -:/+osssso+-
+ `+sso+:-`                 `.-/+oso:
+`++:.                           `-/+/
+.`                                 `/
+"""
