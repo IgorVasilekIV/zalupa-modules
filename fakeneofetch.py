@@ -138,36 +138,36 @@ class FakeNeofetchMod(loader.Module):
         """Показывает фейковый вывод neofetch с кастомным хостом"""
         msg = await utils.answer(message, self.strings["loading"])
 
-        if self.config["ENABLE_DELAY"]:
-            await asyncio.sleep(float(self.config['DELAY']))
+        if self.config["enable_delay"]:
+            await asyncio.sleep(float(self.config['delay']))
 
         current_time = datetime.now().strftime("%H:%M:%S")
 
 
         system_info = f"""
-{self.config['CUSTOM_USER']}@{self.config['CUSTOM_HOSTNAME']}
+{self.config['user']}@{self.config['hostname']}
 -----------------
-OS: {self.config['CUSTOM_OS']}
-Kernel: {self.config['CUSTOM_KERNEL']}
-Uptime: {self.config['CUSTOM_UPTIME']}
-Packages: {self.config['CUSTOM_PACKAGES']}
-CPU: {self.config['CUSTOM_CPU']}
-Memory: {self.config['CUSTOM_MEMORY']}"""
+OS: {self.config['os']}
+Kernel: {self.config['kernel']}
+Uptime: {self.config['uptime']}
+Packages: {self.config['packages']}
+CPU: {self.config['cpu']}
+Memory: {self.config['memory']}"""
 
-        output = f"<pre>{system_info}</pre>\n<b>Выполнено за {self.config['DELAY']} секунд.</b>"
+        output = f"<pre>{system_info}</pre>\n<b>Выполнено за {self.config['delay']} секунд.</b>"
         await utils.answer(msg, output)
 
     @loader.command(ru_doc="Сбросить все настройки до стандартных")
     async def resetneofetch(self, message):
         """Сбрасывает все настройки neofetch до стандартных"""
-        self.config["CUSTOM_OS"] = "Arch Linux"
-        self.config["CUSTOM_HOSTNAME"] = "archbtw"
-        self.config["CUSTOM_USER"] = "root"
-        self.config["CUSTOM_KERNEL"] = "Linux 6.2.0-arch1"
-        self.config["CUSTOM_UPTIME"] = "69 days, 4 hours, 20 minutes"
-        self.config["CUSTOM_PACKAGES"] = "1337"
-        self.config["CUSTOM_CPU"] = "AMD Ryzen 9 7950X"
-        self.config["CUSTOM_MEMORY"] = "64GB / 128GB"
-        self.config["DELAY"] = "1.5"
+        self.config["os"] = "Arch Linux"
+        self.config["hostname"] = "archbtw"
+        self.config["user"] = "root"
+        self.config["kernel"] = "Linux 6.2.0-arch1"
+        self.config["uptime"] = "69 days, 4 hours, 20 minutes"
+        self.config["packages"] = "1337"
+        self.config["cpu"] = "AMD Ryzen 9 7950X"
+        self.config["memory"] = "64GB / 128GB"
+        self.config["delay"] = "1.5"
 
         await utils.answer(message, self.strings["custom_host_reset"])
