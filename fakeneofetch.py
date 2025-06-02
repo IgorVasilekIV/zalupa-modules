@@ -87,7 +87,7 @@ class FakeNeofetchMod(loader.Module):
                 "kernel",
                 "Linux 6.2.0-arch1",
                 doc=lambda: self.strings["_cfg_kernel"],
-                validator=loader.validators.String(min=1, max=20),
+                validator=loader.validators.String(min_len=1, max_len=20),
             ),
             loader.ConfigValue(
                 "uptime",
@@ -99,7 +99,7 @@ class FakeNeofetchMod(loader.Module):
                 "packages",
                 1337,
                 doc=lambda: self.strings["_cfg_packages"],
-                validator=loader.validators.Integer(min=0, max=999999999),
+                #validator=loader.validators.Integer(min_len=0, max_len=999999999),
             ),
             loader.ConfigValue(
                 "cpu",
@@ -123,7 +123,7 @@ class FakeNeofetchMod(loader.Module):
                 "delay",
                 1.5,
                 doc=lambda: self.strings["_cfg_delay"],
-                validator=loader.validators.Float(min=0.0, max=999999999.0),
+                #validator=loader.validators.Float(min=0.0, max=999999999.0),
             ),
         )
 
