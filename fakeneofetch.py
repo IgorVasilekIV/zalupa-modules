@@ -30,55 +30,100 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class FakeNeofetchMod(loader.Module):
-    """Имитация neofetch --stdout, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy"""
+    """Имитация neofetch --stdout, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy (да падажите не гатова ещо)"""
 
     strings = {
-        "name": "Fakeneofetch",
+        "name": "FFetch",
         "loading": "<b>Loading system information...</b>",
         "custom_host_reset": "<b>Custom host reset to default</b>",
+        "_cfg_os": "Custom OS for display",
+        "_cfg_hostname": "Custom hostname for display",
+        "_cfg_user": "Custom username for display",
+        "_cfg_kernel": "Custom kernel for display",
+        "_cfg_uptime": "Custom uptime for display",
+        "_cfg_packages": "Custom packages for display",
+        "_cfg_cpu": "Custom CPU for display",
+        "_cfg_ram": "Custom RAM for display",
+        "_cfg_enable_delay": "Enable delay before output",
+        "_cfg_delay": "Delay before output in seconds",
     }
 
     strings_ru = {
-        "name": "Fakeneofetch",
+        "name": "FFetch",
         "loading": "<b>Загрузка системной информации...</b>",
         "custom_host_reset": "<b>Кастомный хост сброшен до стандартного</b>",
+        "_cfg_os": "Кастомная ОС для отображения",
+        "_cfg_hostname": "Кастомный хостнейм для отображения",
+        "_cfg_user": "Кастомное имя пользователя",
+        "_cfg_kernel": "Кастомный ядро для отображения",
+        "_cfg_uptime": "Кастомное время работы для отображения",
+        "_cfg_packages": "Кастомные пакеты для отображения",
+        "_cfg_cpu": "Кастомный процессор для отображения",
+        "_cfg_enable_delay": "Включить задержку перед выводом",
+        "_cfg_delay": "Задержка перед выводом в секундах",
     }
 
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "custom_host",
-                "archbtw", "Кастомный хост для отображения",
+                "os",
+                "Arch Linux",
+                doc=lambda: self.strings["_cfg_os"],
+                validator=loader.validators.String(min_length=1, max_length=20)
             ),
             loader.ConfigValue(
-                "custom_os", "Arch Linux", "Кастомный хост для отображения",
+                "hostname",
+                "archbtw",
+                doc=lambda: self.strings["_cfg_hostname"],
+                validator=loader.validators.String(min_length=1, max_length=20)
             ),
             loader.ConfigValue(
-                "custom_hostname", "archbtw", "Кастомный хостнейм для отображения",
+                "user",
+                "root",
+                doc=lambda: self.strings["_cfg_user"],
+                validator=loader.validators.String(min_length=1, max_length=20),
             ),
             loader.ConfigValue(
-                "custom_user", "root", "Кастомное имя пользователя",
+                "kernel",
+                "Linux 6.2.0-arch1",
+                doc=lambda: self.strings["_cfg_kernel"],
+                validator=loader.validators.String(min_length=1, max_length=20),
             ),
             loader.ConfigValue(
-                "custom_kernel", "Linux 6.2.0-arch1", "Кастомное ядро",
+                "uptime",
+                "69 days, 4 hours, 20 minutes",
+                doc=lambda: self.strings["_cfg_uptime"],
+                validator=loader.validators.String(min_length=1, max_length=50),
             ),
             loader.ConfigValue(
-                "custom_uptime", "69 days, 4 hours, 20 minutes", "Кастомное время работы",
+                "packages",
+                1337,
+                doc=lambda: self.strings["_cfg_packages"],
+                validator=loader.validators.Integer(min_value=0, max_value=999999999),
             ),
             loader.ConfigValue(
-                "custom_packages", "1337", "Кастомное количество пакетов",
+                "cpu",
+                "AMD Ryzen 9 7950X",
+                doc=lambda: self.strings["_cfg_cpu"],
+                validator=loader.validators.String(min_length=1, max_length=50),
             ),
             loader.ConfigValue(
-                "custom_cpu", "AMD Ryzen 9 7950X", "Процессор",
+                "ram",
+                "64GB / 128GB",
+                doc=lambda: self.strings["_cfg_ram"],
+                validator=loader.validators.String(min_length=1, max_length=50),
             ),
             loader.ConfigValue(
-                "custom_memory", "64GB / 128GB", "Память (использовано / всего)",
+                "enable_delay",
+                True,
+                doc=lambda: self.strings["_cfg_enable_delay"],
+                validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
-                "enable_delay", True, "Включить задержку перед выводом",
-            ),
-            loader.ConfigValue(
-                "delay", "1.5", "Задержка перед выводом (секунды)",
+                "delay",
+                1.5,
+                doc=lambda: self.strings["_cfg_delay"],
+                validator=loader.validators.Float(min_value=0.0, max_value=999999999.0),
             ),
         )
 
