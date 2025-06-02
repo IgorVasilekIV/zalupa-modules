@@ -99,7 +99,7 @@ class FakeNeofetchMod(loader.Module):
                 "packages",
                 1337,
                 doc=lambda: self.strings["_cfg_packages"],
-                validator=loader.validators.Integer(min_value=0, max_value=999999999),
+                validator=loader.validators.Integer(min_len=0, max_len=999999999),
             ),
             loader.ConfigValue(
                 "cpu",
@@ -123,7 +123,7 @@ class FakeNeofetchMod(loader.Module):
                 "delay",
                 1.5,
                 doc=lambda: self.strings["_cfg_delay"],
-                validator=loader.validators.Float(min_value=0.0, max_value=999999999.0),
+                validator=loader.validators.Float(min_len=0.0, max_len=999999999.0),
             ),
         )
 
