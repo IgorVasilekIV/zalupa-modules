@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class FakeNeofetchMod(loader.Module):
-    """Имитация neofetch --stdout, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy"""
+    """Имитация neofetch, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy"""
 
     strings = {
         "name": "FFetch",
