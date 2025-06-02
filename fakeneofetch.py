@@ -69,31 +69,31 @@ class FakeNeofetchMod(loader.Module):
                 "os",
                 "Arch Linux",
                 doc=lambda: self.strings["_cfg_os"],
-                validator=loader.validators.String(min_length=1, max_length=20)
+                validator=loader.validators.String(min_len=1, max_len=20)
             ),
             loader.ConfigValue(
                 "hostname",
                 "archbtw",
                 doc=lambda: self.strings["_cfg_hostname"],
-                validator=loader.validators.String(min_length=1, max_length=20)
+                validator=loader.validators.String(min_len=1, max_len=20)
             ),
             loader.ConfigValue(
                 "user",
                 "root",
                 doc=lambda: self.strings["_cfg_user"],
-                validator=loader.validators.String(min_length=1, max_length=20),
+                validator=loader.validators.String(min_len=1, max_len=20),
             ),
             loader.ConfigValue(
                 "kernel",
                 "Linux 6.2.0-arch1",
                 doc=lambda: self.strings["_cfg_kernel"],
-                validator=loader.validators.String(min_length=1, max_length=20),
+                validator=loader.validators.String(min_len=1, max_len=20),
             ),
             loader.ConfigValue(
                 "uptime",
                 "69 days, 4 hours, 20 minutes",
                 doc=lambda: self.strings["_cfg_uptime"],
-                validator=loader.validators.String(min_length=1, max_length=50),
+                validator=loader.validators.String(min_len=1, max_len=50),
             ),
             loader.ConfigValue(
                 "packages",
@@ -105,13 +105,13 @@ class FakeNeofetchMod(loader.Module):
                 "cpu",
                 "AMD Ryzen 9 7950X",
                 doc=lambda: self.strings["_cfg_cpu"],
-                validator=loader.validators.String(min_length=1, max_length=50),
+                validator=loader.validators.String(min_len=1, max_len=50),
             ),
             loader.ConfigValue(
                 "ram",
                 "64GB / 128GB",
                 doc=lambda: self.strings["_cfg_ram"],
-                validator=loader.validators.String(min_length=1, max_length=50),
+                validator=loader.validators.String(min_len=1, max_len=50),
             ),
             loader.ConfigValue(
                 "enable_delay",
@@ -152,7 +152,7 @@ Kernel: {self.config['kernel']}
 Uptime: {self.config['uptime']}
 Packages: {self.config['packages']}
 CPU: {self.config['cpu']}
-Memory: {self.config['memory']}"""
+Memory: {self.config['ram']}"""
 
         output = f"<pre>{system_info}</pre>\n<b>Выполнено за {self.config['delay']} секунд.</b>"
         await utils.answer(msg, output)
@@ -167,7 +167,7 @@ Memory: {self.config['memory']}"""
         self.config["uptime"] = "69 days, 4 hours, 20 minutes"
         self.config["packages"] = "1337"
         self.config["cpu"] = "AMD Ryzen 9 7950X"
-        self.config["memory"] = "64GB / 128GB"
+        self.config["ram"] = "64GB / 128GB"
         self.config["delay"] = "1.5"
 
         await utils.answer(message, self.strings["custom_host_reset"])
