@@ -69,49 +69,49 @@ class FakeNeofetchMod(loader.Module):
                 "os",
                 "Arch Linux",
                 doc=lambda: self.strings["_cfg_os"],
-                validator=loader.validators.String(min_len=1, max_len=20)
+                validator=loader.validators.String(min=1, max=20)
             ),
             loader.ConfigValue(
                 "hostname",
                 "archbtw",
                 doc=lambda: self.strings["_cfg_hostname"],
-                validator=loader.validators.String(min_len=1, max_len=20)
+                validator=loader.validators.String(min=1, max=20)
             ),
             loader.ConfigValue(
                 "user",
                 "root",
                 doc=lambda: self.strings["_cfg_user"],
-                validator=loader.validators.String(min_len=1, max_len=20),
+                validator=loader.validators.String(min=1, max=20),
             ),
             loader.ConfigValue(
                 "kernel",
                 "Linux 6.2.0-arch1",
                 doc=lambda: self.strings["_cfg_kernel"],
-                validator=loader.validators.String(min_len=1, max_len=20),
+                validator=loader.validators.String(min=1, max=20),
             ),
             loader.ConfigValue(
                 "uptime",
                 "69 days, 4 hours, 20 minutes",
                 doc=lambda: self.strings["_cfg_uptime"],
-                validator=loader.validators.String(min_len=1, max_len=50),
+                validator=loader.validators.String(min=1, max=50),
             ),
             loader.ConfigValue(
                 "packages",
                 1337,
                 doc=lambda: self.strings["_cfg_packages"],
-                validator=loader.validators.Integer(min_len=0, max_len=999999999),
+                validator=loader.validators.Integer(min=0, max=999999999),
             ),
             loader.ConfigValue(
                 "cpu",
                 "AMD Ryzen 9 7950X",
                 doc=lambda: self.strings["_cfg_cpu"],
-                validator=loader.validators.String(min_len=1, max_len=50),
+                validator=loader.validators.String(min=1, max=50),
             ),
             loader.ConfigValue(
                 "ram",
                 "64GB / 128GB",
                 doc=lambda: self.strings["_cfg_ram"],
-                validator=loader.validators.String(min_len=1, max_len=50),
+                validator=loader.validators.String(min=1, max=50),
             ),
             loader.ConfigValue(
                 "enable_delay",
