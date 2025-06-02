@@ -1,9 +1,22 @@
 """
-    Фейк/кастом фетч для рофлов
-    (ох уж этот рн7)
+fake/custom fetch for rofls 🙂
 """
+# ИИшка кормит, больные мозги тоже
+#
 # meta developer: @HikkaZPM
-
+#
+# The module is made as a joke, all coincidences are random :P
+#
+#       кот вахуи
+#       /\_____/\
+#      /  o   o  \
+#     ( ==  ^  == )
+#      )         (
+#     (           )
+#    ( (  )   (  ) )
+#   (__(__)___(__)__)
+#
+#
 from .. import loader, utils
 from telethon import events
 import asyncio
@@ -17,9 +30,15 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class FakeNeofetchMod(loader.Module):
-    """Имитация neofetch --stdout"""
+    """Имитация neofetch --stdout, канал с пресетами: https://t.me/+t_xLnCad6zM1NmEy"""
 
     strings = {
+        "name": "Fakeneofetch",
+        "loading": "<b>Loading system information...</b>",
+        "custom_host_reset": "<b>Custom host reset to default</b>",
+    }
+
+    strings_ru = {
         "name": "Fakeneofetch",
         "loading": "<b>Загрузка системной информации...</b>",
         "custom_host_reset": "<b>Кастомный хост сброшен до стандартного</b>",
@@ -27,16 +46,40 @@ class FakeNeofetchMod(loader.Module):
 
     def __init__(self):
         self.config = loader.ModuleConfig(
-            "custom_os", "Arch Linux", "Кастомный хост для отображения",
-            "custom_hostname", "archbtw", "Кастомный хостнейм для отображения",
-            "custom_user", "root", "Кастомное имя пользователя",
-            "custom_kernel", "Linux 6.2.0-arch1", "Кастомное ядро",
-            "custom_uptime", "69 days, 4 hours, 20 minutes", "Кастомное время работы",
-            "custom_packages", "1337", "Кастомное количество пакетов",
-            "custom_cpu", "AMD Ryzen 9 7950X", "Процессор",
-            "custom_memory", "64GB / 128GB", "Память (использовано / всего)",
-            "enable_delay", True, "Включить задержку перед выводом",
-            "delay", "1.5", "Задержка перед выводом (секунды)",
+            loader.ConfigValue(
+                "custom_host",
+                "archbtw", "Кастомный хост для отображения",
+            ),
+            loader.ConfigValue(
+                "custom_os", "Arch Linux", "Кастомный хост для отображения",
+            ),
+            loader.ConfigValue(
+                "custom_hostname", "archbtw", "Кастомный хостнейм для отображения",
+            ),
+            loader.ConfigValue(
+                "custom_user", "root", "Кастомное имя пользователя",
+            ),
+            loader.ConfigValue(
+                "custom_kernel", "Linux 6.2.0-arch1", "Кастомное ядро",
+            ),
+            loader.ConfigValue(
+                "custom_uptime", "69 days, 4 hours, 20 minutes", "Кастомное время работы",
+            ),
+            loader.ConfigValue(
+                "custom_packages", "1337", "Кастомное количество пакетов",
+            ),
+            loader.ConfigValue(
+                "custom_cpu", "AMD Ryzen 9 7950X", "Процессор",
+            ),
+            loader.ConfigValue(
+                "custom_memory", "64GB / 128GB", "Память (использовано / всего)",
+            ),
+            loader.ConfigValue(
+                "enable_delay", True, "Включить задержку перед выводом",
+            ),
+            loader.ConfigValue(
+                "delay", "1.5", "Задержка перед выводом (секунды)",
+            ),
         )
 
     async def client_ready(self, client, db):
