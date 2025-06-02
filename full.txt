@@ -3,4 +3,4 @@ ud
 bootanim
 femboy
 okak
-fakeneofetch
+ffetch
