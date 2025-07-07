@@ -1,6 +1,4 @@
-# чатгпт кормит, больные мозги тоже
-#
-# meta banner: https://files.catbox.moe/u91fwo.jpg (a gde femboy set 😔)
+# meta banner: https://files.catbox.moe/u91fwo.jpg
 # meta developer: @HikkaZPM
 #
 # The module is made as a joke, all coincidences are random :P
@@ -15,7 +13,6 @@
 #   (__(__)___(__)__)
 # 
 # 
-#
 
 from .. import loader, utils
 import aiohttp
@@ -24,19 +21,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class AurSearchMod(loader.Module):
-    """Модуль для поиска пакетов в AUR (Arch User Repository)"""
-    strings = {"name": "AURSearch"}
+class AURSearchMod(loader.Module):
+    """Поиск aur пакетов в aur.archlinux.org"""
+    strings = {"name": "ArchAUR"}
 
     async def client_ready(self, client, db):
         self._client = client
 
     @loader.unrestricted
     async def aurcmd(self, message):
-        """Поиск пакетов в AUR. Использование: .aur <запрос>"""
         args = utils.get_args_raw(message)
         if not args:
-            await utils.answer(message, "❌ Укажите запрос для поиска в AUR\nПример: <code>.aur neofetch</code>")
+            await utils.answer(message, "<emoji document_id=5210956306952758910>👀</emoji> Укажите запрос для поиска в AUR\nПример: <code>.aur neofetch</code>")
             return
 
         url = f"https://aur.archlinux.org/rpc/?v=5&type=search&arg={args}"
@@ -51,21 +47,21 @@ class AurSearchMod(loader.Module):
                     data = await response.json()
                     
             if data["resultcount"] == 0:
-                await utils.answer(message, f"🔍 По запросу <code>{args}</code> ничего не найдено")
+                await utils.answer(message, f"<emoji document_id=5210956306952758910>👀</emoji> По запросу <code>{args}</code> ничего не найдено")
                 return
                 
-            packages = data["results"][:8]
-            response_text = f"🔍 Результаты поиска в AUR для <code>{args}</code>:\n\n"
+            packages = data["results"][:10]
+            response_text = f"<emoji document_id=5397674675796985688>🔍</emoji> Результаты поиска в AUR для <code>{args}</code>:\n\n"
             
             for pkg in packages:
                 pkg_url = f"https://aur.archlinux.org/packages/{pkg['Name']}"
                 response_text += (
-                    f"<blockquote expandable>📦 <b><a href='{pkg_url}'>{pkg['Name']}</a></b> ({pkg['Version']})\n"
+                    f"<blockquote expandable><emoji document_id=5433653135799228968>📦</emoji> <b><a href='{pkg_url}'>{pkg['Name']}</a></b> ({pkg['Version']})\n"
                     f"└ {pkg.get('Description', 'Без описания')}\n\n"
                 )
             
             if data["resultcount"] > 5:
-                response_text += f"</blockquote>ℹ️ Показано 5 из {data['resultcount']} результатов"
+                response_text += f"</blockquote><emoji document_id=5210956306952758910>👀</emoji> Показано 10 из {data['resultcount']} результатов"
 
         except aiohttp.ClientError:
             await utils.answer(message, "⚠️ Ошибка сети при подключении к AUR")
