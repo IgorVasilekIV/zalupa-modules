@@ -21,7 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class AURSearchMod(loader.Module):
+class AurSearchMod(loader.Module):
     """Поиск aur пакетов в aur.archlinux.org"""
     strings = {"name": "ArchAUR"}
 
