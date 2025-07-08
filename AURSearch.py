@@ -60,7 +60,7 @@ class AurSearchMod(loader.Module):
                     f"└ {pkg.get('Description', 'Без описания')}\n\n"
                 )
             
-            if data["resultcount"] > 5:
+            if data["resultcount"] > 0:
                 response_text += f"</blockquote><emoji document_id=5210956306952758910>👀</emoji> Показано 10 из {data['resultcount']} результатов"
 
         except aiohttp.ClientError:
