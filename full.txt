@@ -4,4 +4,4 @@ bootanim
 femboy
 okak
 fakeneofetch
-ArchAUR
+aursearch
