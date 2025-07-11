@@ -1,3 +1,10 @@
+"""
+Some description:
+Search pkgs on https://aur.archlinux.org (i dont know why)
+"""
+
+__version__ = (1.1)
+
 # meta banner: https://files.catbox.moe/u91fwo.jpg
 # meta developer: @HikkaZPM
 #
