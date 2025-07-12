@@ -30,7 +30,9 @@ logger = logging.getLogger(__name__)
 @loader.tds
 class ArchAURMod(loader.Module):
     """Поиск aur пакетов в aur.archlinux.org"""
-
+    
+    strings = {"name": "ArchAUR"}
+    
     async def client_ready(self, client, db):
         self._client = client
 
