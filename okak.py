@@ -36,6 +36,7 @@ class okakMod(loader.Module):
         else:
             await m.edit("не не окак <emoji document_id=5368495273578356245>😒</emoji>")
 
+    @loader.command(no_stickers=True)
     async def watcher(self, m):
         if self.db.get("okak", "on", False) and m.out:
             await m.edit("окак")
