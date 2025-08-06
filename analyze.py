@@ -1,6 +1,5 @@
 # meta developer: @HikkaZPM
 # meta version: 1.0.0
-# scope: hikka_min 1.7.0
 # requires: google.generativeai
 
 from .. import loader, utils
