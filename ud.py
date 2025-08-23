@@ -169,7 +169,7 @@ class UrbanDictionaryMod(loader.Module):
         
         for i, d in enumerate(defs, 1):
             def_text = self._format_def(d)
-            formatted_defs.append(f"<blockquote>{def_text}</blockquote>")
+            formatted_defs.append(f"<blockquote expandable>{def_text}</blockquote>")
             
             # Добавляем кнопки перевода для каждого определения
             buttons.append([
