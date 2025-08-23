@@ -16,10 +16,11 @@
 #
 #
 from .. import loader, utils
-from aiogram import types
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telethon.tl.types import Message
+from telethon.tl.types import InlineKeyboardMarkup, InlineKeyboardButton
 import aiohttp
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,9 @@ class UrbanDictionaryMod(loader.Module):
     """Поиск сленговых значений в UrbanDictionary, пишите на английском для лучшего поиска (перевод в будующем)"""
 
     strings = {"name": "UrbanDictionary"}
+    
+    def __init__(self):
+        self._ud_cache = {}
 
     async def ud_search(self, term: str):
         """Запрос к Urban Dictionary API"""
@@ -49,8 +53,20 @@ class UrbanDictionaryMod(loader.Module):
             logger.error(f"Urban error: {e}")
             return {"error": str(e)}
 
+    async def format_definition(self, item: dict, current_page: int, total_pages: int) -> str:
+        """Форматирует определение для отображения"""
+        definition = item.get("definition", "No definition").replace("[", "").replace("]", "")
+        example = item.get("example", "No example").replace("[", "").replace("]", "")
+        
+        return (
+            f"📖 Страница {current_page + 1}/{total_pages}\n\n"
+            f"👍 {item.get('thumbs_up', 0)} | 👎 {item.get('thumbs_down', 0)}\n"
+            f"📝 <b>Определение:</b>\n<i>{definition[:250]}</i>\n\n"
+            f"💬 <b>Пример:</b>\n<i>{example[:200]}</i>"
+        )
+
     @loader.unrestricted
-    async def udcmd(self, message: types.Message):
+    async def udcmd(self, message: Message):
         """Поиск обозначения"""
         args = utils.get_args_raw(message)
         if not args:
@@ -67,54 +83,75 @@ class UrbanDictionaryMod(loader.Module):
             await utils.answer(message, f"<emoji document_id=5316509307255137126>🔍</emoji> Нет результатов для '{args}'")
             return
 
-        response = f"<emoji document_id=5341355074587206546>📖</emoji> <b>{args}</b> в Urban Dictionary:\n\n"
-        for idx, item in enumerate(result, 1):
-            definition = item.get("definition", "No definition").replace("[", "").replace("]", "")
-            example = item.get("example", "No example").replace("[", "").replace("]", "")
+        # Сохраняем результаты и текущую страницу
+        self._ud_cache = {
+            "results": result,
+            "term": args,
+            "page": 0
+        }
 
-            response += (
-                f"{idx}. <emoji document_id=5461010063135088912>👍</emoji> {item.get('thumbs_up', 0)} | "
-                f"<emoji document_id=5463294908427148871>👎</emoji> {item.get('thumbs_down', 0)}\n"
-                f"<i>{definition[:250]}</i>\n"
-                f"<emoji document_id=5443038326535759644>💬</emoji> Пример: <i>{example[:200]}</i>\n\n"
-            )
+        # Создаем инлайн кнопки
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    text="⬅️ Назад",
+                    callback_data=f"ud_nav:{0}:prev"
+                ),
+                InlineKeyboardButton(
+                    text="Вперед ➡️",
+                    callback_data=f"ud_nav:{0}:next"
+                )
+            ]
+        ]
 
-        msg = await utils.answer(message, response)
+        # Форматируем первый результат
+        response = await self.format_definition(result[0], 0, len(result))
 
-""" патом как нибудб 😊
-
-        # Создаем кнопки перевода
-        keyboard = InlineKeyboardMarkup().row(
-            InlineKeyboardButton("🇷🇺 Русский", callback_data=f"tr_ru_{msg.id}"),
-            InlineKeyboardButton("🇬🇧 Английский", callback_data=f"tr_en_{msg.id}")
+        await message.respond(
+            response,
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
-        # Добавляем кнопки к сообщению
-        await msg.edit_reply_markup(keyboard)
+    async def ud_nav_callback(self, call):
+        """Обработчик нажатий на кнопки навигации"""
+        if not call.data.startswith("ud_nav:"):
+            return
 
-    @loader.callback_handler(lambda call: call.data.startswith("tr_"))
-    async def translate_handler(self, call: types.CallbackQuery):
-        ###Обработчик кнопок перевода###
-        lang, msg_id = call.data.split("_")[1], call.data.split("_")[2]
-        msg = await self.client.get_messages(call.message.chat.id, ids=int(msg_id))
+        # Получаем текущую страницу и направление
+        _, current_page, direction = call.data.split(":")
+        current_page = int(current_page)
 
-        try:
-            translated = await self.client.translate_message(
-                chat_id=msg.chat.id,
-                message_id=msg.id,
-                to_lang=lang
-            )
-            await msg.edit(
-                text=f"<emoji document_id=5447410659077661506>🌐</emoji> {translated.text}",
-                reply_markup=msg.reply_markup
-            )
-        except Exception as e:
-            logger.error(f"Translate error: {e}")
-            await call.answer("<emoji document_id=5420323339723881652>⚠️</emoji> Ошибка перевода!", show_alert=True)
+        if not self._ud_cache:
+            await call.answer("❌ Данные устарели, сделайте новый поиск")
+            return
 
-        await call.answer()
+        results = self._ud_cache["results"]
+        new_page = current_page
 
-    async def client_ready(self, client, db):
-        self.client = client
-        self.db = db
-"""
+        if direction == "next" and current_page < len(results) - 1:
+            new_page = current_page + 1
+        elif direction == "prev" and current_page > 0:
+            new_page = current_page - 1
+        
+        # Обновляем кнопки
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    text="⬅️ Назад",
+                    callback_data=f"ud_nav:{new_page}:prev"
+                ),
+                InlineKeyboardButton(
+                    text="Вперед ➡️",
+                    callback_data=f"ud_nav:{new_page}:next"
+                )
+            ]
+        ]
+
+        # Форматируем результат для новой страницы
+        response = await self.format_definition(results[new_page], new_page, len(results))
+
+        await call.edit(
+            response,
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
