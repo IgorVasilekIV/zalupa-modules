@@ -1,4 +1,4 @@
-__version__ = (0, 8, 1)
+__version__ = (0, 8, 2)
 
 """
 Search words definitions in Urban Dictionary through their API
@@ -39,7 +39,7 @@ class UrbanDictionaryMod(loader.Module):
         "no_results": "😕 <b>Не найдено</b>",
         "error": "❌ <b>{}</b>",
         "choose_lang": "🌐 <b>Выберите язык для перевода:</b>",
-        "translating": "🔄 <b>Перевожу...</b>",
+        "translating": "🔄 Перевожу...",
         "translated": "🌐 <b>Перевод на {}:</b>\n\n{}"
     }
 
