@@ -1,3 +1,11 @@
+__version__ = (0, 4, 3)
+
+"""
+Search words definitions in Urban Dictionary through their API
+
+TODO: add inline buttons for translation (ru/en) using googletrans / self._client.translate_message
+"""
+
 # чатгпт кормит, больные мозги тоже
 #
 # meta banner: https://files.catbox.moe/swqxd1.png
@@ -15,143 +23,75 @@
 #   (__(__)___(__)__)
 #
 #
+
 from .. import loader, utils
-from telethon.tl.types import Message
-from telethon.tl.types import InlineKeyboardMarkup, InlineKeyboardButton
 import aiohttp
-import logging
-import json
-
-logger = logging.getLogger(__name__)
-
-UD_API_KEY = "99729790b5mshd8ec94082f78c14p1dbb97jsn52ae508bea0d"
 
 @loader.tds
 class UrbanDictionaryMod(loader.Module):
-    """Поиск сленговых значений в UrbanDictionary, пишите на английском для лучшего поиска (перевод в будующем)"""
-
-    strings = {"name": "UrbanDictionary"}
+    """Поиск слов в Urban Dictionary"""
     
+    strings = {
+        "name": "UrbanDict",
+        "no_term": "🤔 <b>Что искать?</b>",
+        "no_results": "😕 <b>Не найдено</b>",
+        "error": "❌ <b>{}</b>"
+    }
+
     def __init__(self):
-        self._ud_cache = {}
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "definitions",
+                3,
+                doc="Количество определений для вывода",
+                validator=loader.validators.Integer(minimum=1, maximum=8)
+            )
+        )
 
-    async def ud_search(self, term: str):
-        """Запрос к Urban Dictionary API"""
-        url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
-        headers = {
-            "X-RapidAPI-Key": UD_API_KEY,
-            "X-RapidAPI-Host": "mashape-community-urban-dictionary.p.rapidapi.com"
-        }
 
+    async def _get_definition(self, term: str):
+        """Получаем определение слова"""
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers, params={"term": term}) as resp:
+                async with session.get(
+                    "https://api.urbandictionary.com/v0/define",
+                    params={"term": term},
+                    timeout=5
+                ) as resp:
                     if resp.status != 200:
-                        return {"error": f"API Error: {resp.status}"}
-                    return (await resp.json()).get("list", [])[:3]
-        except Exception as e:
-            logger.error(f"Urban error: {e}")
-            return {"error": str(e)}
+                        return None
+                        
+                    data = await resp.json()
+                    if not data.get("list"):
+                        return None
+                        
+                    return data["list"][:self.config["definitions"]]
+        except:
+            return None
 
-    async def format_definition(self, item: dict, current_page: int, total_pages: int) -> str:
-        """Форматирует определение для отображения"""
-        definition = item.get("definition", "No definition").replace("[", "").replace("]", "")
-        example = item.get("example", "No example").replace("[", "").replace("]", "")
-        
+    def _format_def(self, d: dict) -> str:
+        """Форматируем определение"""
         return (
-            f"📖 Страница {current_page + 1}/{total_pages}\n\n"
-            f"👍 {item.get('thumbs_up', 0)} | 👎 {item.get('thumbs_down', 0)}\n"
-            f"📝 <b>Определение:</b>\n<i>{definition[:250]}</i>\n\n"
-            f"💬 <b>Пример:</b>\n<i>{example[:200]}</i>"
+            f"<b>{d['thumbs_up']}👍</b>\n"
+            f"{d['definition'].replace('[','').replace(']','')[:150]}..."
         )
 
     @loader.unrestricted
-    async def udcmd(self, message: Message):
-        """Поиск обозначения"""
-        args = utils.get_args_raw(message)
-        if not args:
-            await utils.answer(message, "<emoji document_id=5237993272109967450>❌</emoji> Укажите слово для поиска!")
+    async def udcmd(self, message):
+        """[слово] - найти определение"""
+        term = utils.get_args_raw(message)
+        if not term:
+            await utils.answer(message, self.strings["no_term"])
             return
 
-        result = await self.ud_search(args)
-
-        if isinstance(result, dict) and "error" in result:
-            await utils.answer(message, f"<emoji document_id=5210952531676504517>❌</emoji> Ошибка: {result['error']}")
+        defs = await self._get_definition(term)
+        if not defs:
+            await utils.answer(message, self.strings["no_results"])
             return
 
-        if not result:
-            await utils.answer(message, f"<emoji document_id=5316509307255137126>🔍</emoji> Нет результатов для '{args}'")
-            return
+        # собираем в одну кучу
+        text = "\n\n".join(f"<blockquote expandable>{self._format_def(d)}\n</blockquote>" for i, d in enumerate(defs))
+        await utils.answer(message, text)
+            
 
-        # Сохраняем результаты и текущую страницу
-        self._ud_cache = {
-            "results": result,
-            "term": args,
-            "page": 0
-        }
-
-        # Создаем инлайн кнопки
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    text="⬅️ Назад",
-                    callback_data=f"ud_nav:{0}:prev"
-                ),
-                InlineKeyboardButton(
-                    text="Вперед ➡️",
-                    callback_data=f"ud_nav:{0}:next"
-                )
-            ]
-        ]
-
-        # Форматируем первый результат
-        response = await self.format_definition(result[0], 0, len(result))
-
-        await message.respond(
-            response,
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-
-    async def ud_nav_callback(self, call):
-        """Обработчик нажатий на кнопки навигации"""
-        if not call.data.startswith("ud_nav:"):
-            return
-
-        # Получаем текущую страницу и направление
-        _, current_page, direction = call.data.split(":")
-        current_page = int(current_page)
-
-        if not self._ud_cache:
-            await call.answer("❌ Данные устарели, сделайте новый поиск")
-            return
-
-        results = self._ud_cache["results"]
-        new_page = current_page
-
-        if direction == "next" and current_page < len(results) - 1:
-            new_page = current_page + 1
-        elif direction == "prev" and current_page > 0:
-            new_page = current_page - 1
-        
-        # Обновляем кнопки
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    text="⬅️ Назад",
-                    callback_data=f"ud_nav:{new_page}:prev"
-                ),
-                InlineKeyboardButton(
-                    text="Вперед ➡️",
-                    callback_data=f"ud_nav:{new_page}:next"
-                )
-            ]
-        ]
-
-        # Форматируем результат для новой страницы
-        response = await self.format_definition(results[new_page], new_page, len(results))
-
-        await call.edit(
-            response,
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
 
