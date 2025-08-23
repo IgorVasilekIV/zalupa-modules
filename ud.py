@@ -112,7 +112,7 @@ class UrbanDictionaryMod(loader.Module):
         formatted_defs = []
         for i, d in enumerate(defs, 1):
             formatted_defs.append(
-                f"<blockquote expandable>{self._format_def(d)}</blockquote>"
+                f"<blockquote>{self._format_def(d)}</blockquote>"
             )
         
         text = "".join(formatted_defs)
