@@ -90,7 +90,7 @@ class UrbanDictionaryMod(loader.Module):
             return
 
         # собираем в одну кучу
-        text = "\n\n".join(f"<blockquote expandable>{self._format_def(d)}\n</blockquote>" for i, d in enumerate(defs))
+        text = "\n".join(f"<blockquote expandable>{self._format_def(d)}\n</blockquote>" for i, d in enumerate(defs))
         await utils.answer(message, text)
             
 
