@@ -1,5 +1,6 @@
 from telethon import events
 import requests
+import os
 from .. import loader, utils
 
 @loader.tds
@@ -27,4 +28,5 @@ class Upload0x0Mod(loader.Module):
         except Exception as e:
             await message.edit(f"Error: {e}")
         finally:
-            utils.safe_remove(file_path)
+            if os.path.exists(file_path):
+                os.remove(file_path)
