@@ -1,4 +1,4 @@
-__version__ = (1, 0, 3)
+__version__ = (1, 0, 7)
 
 
 import os
@@ -6,31 +6,35 @@ import subprocess
 from .. import loader, utils
 
 @loader.tds
-class upl0x0Mod(loader.Module):
-    """Upload files to 0x0.st from replies"""
-    strings = {"name": "0x0"}
+class BashUploadMod(loader.Module):
+    """Upload files to bashupload.com from replies"""
+    strings = {"name": "BashUpload"}
 
-    async def oxocmd(self, message):
-        """Reply to a file to upload it to 0x0.st"""
+    async def bashcmd(self, message):
+        """Reply to a file to upload it to bashupload.com"""
         reply = await message.get_reply_message()
         if not reply or not reply.file:
             await message.edit("Reply to a file to upload.")
             return
 
         file_path = await reply.download_media()
-        await message.edit("Uploading to 0x0.st...")
+        file_name = os.path.basename(file_path)
+        await message.edit("Uploading to bashupload.com...")
 
         try:
-            curl_cmd = ["curl", "-F", f"file=@{file_path}", "https://0x0.st"]
+            curl_cmd = ["curl", "--upload-file", file_path, f"https://bashupload.com/{file_name}"]
             process = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = process.communicate()
             
             if process.returncode == 0 and output:
-                url = output.decode().strip()
-                if url.startswith("https://0x0.st/"):
+                output_text = output.decode()
+                # Find the download URL in the response
+                import re
+                if match := re.search(r"wget (https://bashupload\.com/[^\s]+)", output_text):
+                    url = match.group(1)
                     await message.edit(f"Uploaded: {url}")
                 else:
-                    await message.edit(f"Upload failed. Response: {url}")
+                    await message.edit(f"Failed to parse upload URL from response: {output_text}")
             else:
                 error_msg = error.decode() if error else "Unknown error"
                 await message.edit(f"Upload failed. Error: {error_msg}")
