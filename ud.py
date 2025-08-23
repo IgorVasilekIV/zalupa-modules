@@ -1,4 +1,4 @@
-__version__ = (0, 4, 3)
+__version__ = (0, 4, 5)
 
 """
 Search words definitions in Urban Dictionary through their API
@@ -65,7 +65,7 @@ class UrbanDictionaryMod(loader.Module):
                     if not data.get("list"):
                         return None
                         
-                    return data["list"][:self.config["definitions"]]
+                    return data["list"][:int(self.config["definitions"])]
         except:
             return None
 
@@ -90,7 +90,7 @@ class UrbanDictionaryMod(loader.Module):
             return
 
         # собираем в одну кучу
-        text = "\n".join(f"<blockquote expandable>{self._format_def(d)}\n</blockquote>" for i, d in enumerate(defs))
+        text = "\n\n".join(f"<blockquote expandable>{self._format_def(d)}</blockquote>" for i, d in enumerate(defs))
         await utils.answer(message, text)
             
 
