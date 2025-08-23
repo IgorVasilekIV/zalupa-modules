@@ -115,5 +115,5 @@ class UrbanDictionaryMod(loader.Module):
                 f"<blockquote expandable>{self._format_def(d)}</blockquote>"
             )
         
-        #text = "\n\n".join(formatted_defs)
+        text = "".join(formatted_defs)
         await utils.answer(message, text)
