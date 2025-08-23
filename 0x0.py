@@ -1,3 +1,6 @@
+# meta version: 1.0.1
+
+
 from telethon import events
 import requests
 import os
