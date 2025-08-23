@@ -1,4 +1,4 @@
-__version__ = (0, 4, 5)
+__version__ = (0, 5, 4)
 
 """
 Search words definitions in Urban Dictionary through their API
@@ -64,17 +64,36 @@ class UrbanDictionaryMod(loader.Module):
                     data = await resp.json()
                     if not data.get("list"):
                         return None
-                        
-                    return data["list"][:int(self.config["definitions"])]
+                    
+                    # Сортируем по количеству лайков
+                    definitions = sorted(
+                        data["list"], 
+                        key=lambda x: x.get('thumbs_up', 0), 
+                        reverse=True
+                    )
+                    
+                    return definitions[:int(self.config["definitions"])]
         except:
             return None
 
     def _format_def(self, d: dict) -> str:
         """Форматируем определение"""
+        def cleanup(text: str) -> str:
+            """Очистка текста от разметки"""
+            return text.replace('[','').replace(']','').strip()
+            
+        definition = cleanup(d["definition"])
+        example = cleanup(d["example"]) if d.get("example") else "Нет примера"
+        
+        rating = f"👍 {d.get('thumbs_up', 0):,} • 👎 {d.get('thumbs_down', 0):,}"
+        
         return (
-            f"<b>{d['thumbs_up']}👍</b>\n"
-            f"{d['definition'].replace('[','').replace(']','')[:150]}..."
-        )
+            f"<b>Определение:</b>\n"
+            f"{definition}\n\n"
+            f"💭 <b>Пример:</b>\n"
+            f"<i>{example}</i>\n\n"
+            f"{rating}"
+       )
 
     @loader.unrestricted
     async def udcmd(self, message):
@@ -90,7 +109,13 @@ class UrbanDictionaryMod(loader.Module):
             return
 
         # собираем в одну кучу
-        text = "\n\n".join(f"<blockquote expandable>{self._format_def(d)}</blockquote>" for i, d in enumerate(defs))
+        formatted_defs = []
+        for i, d in enumerate(defs, 1):
+            formatted_defs.append(
+                f"<blockquote expandable>{self._format_def(d)}</blockquote>"
+            )
+        
+        text = "\n\n".join(formatted_defs)
         await utils.answer(message, text)
             
 
