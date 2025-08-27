@@ -36,7 +36,7 @@ class SilentTagsMod(loader.Module):
         "name": "SilentTags",
         "tagged": (
             '<b>🤫 You were tagged in <a href="{}">{}</a> by <a'
-            ' href="tg://openmessage?user_id={}">{}</a></b>\n<code>Message:</code>\n<code>{}</code>\n<b>Link:'
+            ' href="tg://user?id={}">{}</a></b>\n<code>Message:</code>\n<code>{}</code>\n<b>Link:'
             ' <a href="https://t.me/c/{}/{}">click</a></b>'
         ),
         "tag_mentioned": "<b><emoji document_id=5278524998741412656>🤫</emoji> Silent Tags are active</b>",
