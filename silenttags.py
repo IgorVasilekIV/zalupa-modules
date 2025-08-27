@@ -1,3 +1,7 @@
+"""
+😘 fork info: Premium emoji, changed config values (ignore_bots), chat avatar
+"""
+
 __version__ = (2, 0, 3)
 
 #             █ █ ▀ █▄▀ ▄▀█ █▀█ ▀
@@ -35,7 +39,7 @@ class SilentTagsMod(loader.Module):
             ' href="tg://openmessage?user_id={}">{}</a></b>\n<code>Message:</code>\n<code>{}</code>\n<b>Link:'
             ' <a href="https://t.me/c/{}/{}">click</a></b>'
         ),
-        "tag_mentioned": "<b> Silent Tags are active</b>",
+        "tag_mentioned": "<b><emoji document_id=5278524998741412656>🤫</emoji> Silent Tags are active</b>",
         "stags_status": "<b><emoji document_id=5278524998741412656>🤫</emoji> Silent Tags are {}</b>",
         "_cfg_doc_silent_users": (
             "Do not send notifications about tags from users with ids listed"
@@ -290,6 +294,7 @@ class SilentTagsMod(loader.Module):
             silent=True,
             invite_bot=True,
             _folder="hikka",
+            avatar="https://0x0.st/Ko_j.jpg"
         )
 
         if self.config["ignore_blocked"] or self.config["silent_blocked"]:
@@ -317,7 +322,7 @@ class SilentTagsMod(loader.Module):
             message,
             self.strings("stags_status").format("now on" if args else "now off"),
         )
-        await asyncio.sleep(3)
+        await asyncio.sleep(3.3)
         await message.delete()
 
     async def watcher(self, message: Message):
