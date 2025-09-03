@@ -3,3 +3,4 @@ uwufetchmod
 yamusic
 yg_trigger
 cfile
+silenttags
