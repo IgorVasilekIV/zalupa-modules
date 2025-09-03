@@ -2,3 +2,4 @@ antimatmod
 uwufetchmod
 yamusic
 yg_trigger
+cfile
