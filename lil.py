@@ -42,10 +42,9 @@ class lessons_in_loveMod(loader.Module):
         
         msg = await utils.answer(message, self.strings("choosing").format(search_type_str))
         
-        # Собираем сообщения из обоих каналов
         messages = []
-        
-        # Проверяем первый канал
+
+        # первый        
         async for message_in_channel in self.client.iter_messages(
             "lessons_in_love",
             limit=100,
@@ -54,7 +53,7 @@ class lessons_in_loveMod(loader.Module):
             if message_in_channel.sender_id == 7365208353:
                 messages.append(message_in_channel)
                 
-        # Проверяем второй канал
+        # второй
         async for message_in_channel in self.client.iter_messages(
             "lessonsinlove",
             limit=100,
