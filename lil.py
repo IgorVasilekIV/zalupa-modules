@@ -51,7 +51,7 @@ class lessons_in_loveMod(loader.Module):
             limit=100,
             filter=search_type
         ):
-            if message_in_channel.sender_id == 7365208353
+            if message_in_channel.sender_id == 7365208353:
                 messages.append(message_in_channel)
                 
         # Проверяем второй канал
