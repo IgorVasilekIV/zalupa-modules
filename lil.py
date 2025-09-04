@@ -1,4 +1,4 @@
-__version__ = (1, 1, 0)
+__version__ = (1, 2, 0)
 
 from random import choice
 
@@ -33,7 +33,7 @@ class lessons_in_loveMod(loader.Module):
     @loader.command(
 		ru_doc="- подобрать рандом картинку(пикчу)"
 	)
-    async def hent(self, message: Message):
+    async def lil(self, message: Message):
         """- choose a random picture"""
         search_type = choice([
             InputMessagesFilterPhotos,
@@ -60,17 +60,20 @@ class lessons_in_loveMod(loader.Module):
             filter=search_type
         ):
         
-        if not messages:
-            await utils.answer(msg, "❌ Не найдено подходящих картинок")
-            return
+            if not messages:
+                await utils.answer(msg, "❌ Не найдено подходящих картинок")
+                return
             
         chosed_msg = choice(messages)
         
         reply = None if not (reply := await message.get_reply_message()) else reply.id
         
-        return await utils.answer_file(
-            msg,
-            chosed_msg,
-            chosed_msg.text or "<b>Подобрал " + search_type_str + ".</b>",
-            reply_to=reply
+        await msg.delete()
+        
+        await message.client.send_file(
+            message.chat_id,
+            chosed_msg.media,
+            #spoiler=True, # ахахах а где
+            reply_to=reply,
+            caption="" # текст
         )
