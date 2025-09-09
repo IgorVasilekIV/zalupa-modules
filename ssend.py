@@ -25,15 +25,15 @@ class SSend(loader.Module):
         "error": "❌ Пожалуйста, укажите текст для отправки.",
     }
 
-        def __init__(self):
-            self.config = loader.ModuleConfig(
-                loader.ConfigValue(
-                    "link_preview",
-                    False,
-                    lambda: "Disable/enable link preview" 
-                    validator=loader.validators.Boolean(),
-                ),
-            )
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "link_preview",
+                False,
+                lambda: "Disable/enable link preview",
+                validator=loader.validators.Boolean(),
+            ),
+        )
 
     @loader.command(ru_doc="Отправить текст с эмодзи")
     async def send(self, message: Message):
