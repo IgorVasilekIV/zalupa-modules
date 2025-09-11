@@ -1,70 +1,91 @@
+__version__ = (2, 3, 0)
+
 """
-😘 fork info: add cfg and strings
+😘 fork info: Inline buttons in PM (Allow/Deny/Block); auto-allow contacts; bots always allowed; auto-block after 3 msgs + notify (Saved Messages); pretty .allowed listing
 """
 
-# @Sekai_Yoneya
+# @Sekai_Yoneya (main author btw)
 
 from .. import loader, utils
-import datetime, time
-from telethon import functions, types
+from telethon import functions, types, events, Button
+import logging
+
+logger = logging.getLogger(__name__)
 
 @loader.tds
 class AntiPMMod(loader.Module):
+    """Anti-PM with inline buttons, auto-allow contacts, auto-block after 3 msgs, notifications"""
 
     strings = {
-        "name": "Anti-PM", "pm_off": "<b>You are now receiving messages from all users.</b>",
-        "pm_on": "<b>You have stopped receiving messages from users.</b>",
-        "pm_allowed": "<b>I allowed {} to message me.</b>",
-        "pm_deny": "<b>I denied {} to message me.</b>",
-        "blocked": "<b>{} has been added to the Blacklist.</b>",
-        "unblocked": "<b>{} has been removed from the Blacklist.</b>",
-        "addcontact": "<b>{} has been added to contacts.</b>",
-        "delcontact": "<b>{} has been removed from contacts.</b>",
-        "who_to_allow": "<b>Who to allow to message you?</b>",
-        "who_to_deny": "<b>Who to deny to message you?</b>",
-        "who_to_block": "<b>Specify who to block.</b>",
-        "who_to_unblock": "<b>Specify who to unblock.</b>",
-        "who_to_contact": "<b>Specify who to add to contacts.</b>",
-        "who_to_delcontact": "<b>Specify who to remove from contacts.</b>",
-        "_cfg_custom_message": "Custom message if auto-reply to private messages is enabled",}  
-
-    strings_ru = {
-        "name": "Anti-PM", "pm_off": "<b>Теперь вы принимаете сообщения от всех пользователей.</b>",
+        "name": "Anti-PM",
+        "pm_off": "<b>Теперь вы принимаете сообщения от всех пользователей.</b>",
         "pm_on": "<b>Вы перестали принимать сообщения от пользователей.</b>",
         "pm_allowed": "<b>Я разрешил {} писать мне.</b>",
         "pm_deny": "<b>Я запретил {} писать мне.</b>",
-        "blocked": "<b>{} был(-а) занесен(-а) в Черный Список.</b>",
-        "unblocked": "<b>{} удален(-а) из Черного Списка.</b>",
-        "addcontact": "<b>{} был(-а) добавлен(-а) в контакты.</b>",
-        "delcontact": "<b>{} был(-а) удален(-а) из контактов.</b>",
-        "who_to_allow": "<b>Кому разрешить писать в личку ?</b>",
-        "who_to_deny": "<b>Кому запретить писать в личку ?</b>",
+        "blocked": "<b>{} был занесён в Черный Список.</b>",
+        "unblocked": "<b>{} был удалён из Черного Списка.</b>",
+        "addcontact": "<b>{} добавлен в контакты.</b>",
+        "delcontact": "<b>{} удалён из контактов.</b>",
         "who_to_block": "<b>Укажите, кого блокировать.</b>",
         "who_to_unblock": "<b>Укажите, кого разблокировать.</b>",
         "who_to_contact": "<b>Укажите, кого добавить в контакт.</b>",
-        "who_to_delcontact": "<b>Укажите, кого удалить из контактов.</b>", 
-        "_cfg_custom_message": "Кастомное соо если включен автоответ на лс",
-        }
+        "who_to_delcontact": "<b>Укажите, кого удалить из контактов.</b>",
+        "no_args": "<b>Нет аргументов или реплая.</b>",
+        "not_pm": "<b>Это не личное сообщение.</b>",
+        "allowed_header": "<b>Список разрешённых пользователей:</b>\n",
+        "_cfg_custom_message": "Кастомное сообщение при автоответе на ЛС",
+        "_cfg_auto_allow_contacts": "Авторазрешать всем из контактов (True/False)",
+    }
+
+    strings_ru = {
+        "name": "Anti-PM",
+        "pm_off": "<b>Теперь вы принимаете сообщения от всех пользователей.</b>",
+        "pm_on": "<b>Вы перестали принимать сообщения от пользователей.</b>",
+        "pm_allowed": "<b>Я разрешил {} писать мне.</b>",
+        "pm_deny": "<b>Я запретил {} писать мне.</b>",
+        "blocked": "<b>{} был занесён в Черный Список.</b>",
+        "unblocked": "<b>{} был удалён из Черного Списка.</b>",
+        "addcontact": "<b>{} добавлен в контакты.</b>",
+        "delcontact": "<b>{} удалён из контактов.</b>",
+        "who_to_block": "<b>Укажите, кого блокировать.</b>",
+        "who_to_unblock": "<b>Укажите, кого разблокировать.</b>",
+        "who_to_contact": "<b>Укажите, кого добавить в контакт.</b>",
+        "who_to_delcontact": "<b>Укажите, кого удалить из контактов.</b>",
+        "no_args": "<b>Нет аргументов или реплая.</b>",
+        "not_pm": "<b>Это не личное сообщение.</b>",
+        "allowed_header": "<b>Список разрешённых пользователей:</b>\n",
+        "_cfg_custom_message": "Кастомное сообщение при автоответе на ЛС",
+        "_cfg_auto_allow_contacts": "Авторазрешать всем из контактов (True/False)",
+    }
 
     def __init__(self):
-        self.me=None
+        self.me = None
+        self._cb_handler_added = False
 
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "custom_message",
-                "Здравствуй! Сейчас у меня включен автоблок. Надеюсь что ты написал все свои мысли в одном сообщении что бы я тебя разблокировал. Если ты мне не важен, я тебя не разблокирую.",
-                doc=lambda: self.strings("_cfg_custom_message"),
-            )
+                "Привет! У меня включён автоблок. Напиши всё в одном сообщении или ожидай ответа.",
+                lambda: self.strings("_cfg_custom_message"),
+            ),
         )
+        
+        self.auto_allow_contacts = True
 
-    async def client_ready(self, message, db):
-        #db=self.db
-        client = self.client
-        self.me = await client.get_me(True)
+    async def client_ready(self, client, db):
+        self.client = client
+        self.db = db
+        self.me = await client.get_me()
+        # register callback query handler once
+        if not self._cb_handler_added:
+            client.add_event_handler(self._callback_query, events.CallbackQuery)
+            self._cb_handler_added = True
 
+    # -------- Commands --------
     async def pmcmd(self, message):
-        """Используй: .pm : чтобы включить/отключить авто ответ на личные сообщения."""
+        """Используй: .pm — включить/выключить анти-PM (переключатель)."""
         pm = self.db.get("Anti-PM", "pm")
+        # Note: original semantics preserved: pm==True -> receiving messages (anti-PM off)
         if pm is not True:
             await utils.answer(message, self.strings["pm_off"])
             self.db.set("Anti-PM", "pm", True)
@@ -73,54 +94,19 @@ class AntiPMMod(loader.Module):
             self.db.set("Anti-PM", "pm", False)
 
     async def allowcmd(self, message):
-        """Используй: .allow чтобы разрешить этому пользователю писать вам в личку."""
-        try:
-            if message.is_private:
-                user = await message.client.get_entity(message.chat_id)
-            else:
-                return
-        except: return await message.edit("<b>Это не лс.</b>")
-        self.db.set("Anti-PM", "allowed", list(set(self.db.get("Anti-PM", "allowed", [])).union({user.id})))
+        """Используй: .allow — разрешить этому пользователю писать вам в личку (в текущем чате/реплае)."""
+        if not message.is_private:
+            return await message.edit(self.strings["not_pm"])
+        user = await message.client.get_entity(message.chat_id)
+        allowed = set(self.db.get("Anti-PM", "allowed", []))
+        allowed.add(user.id)
+        self.db.set("Anti-PM", "allowed", list(allowed))
+        # reset counters and prompts
+        self.db.set("Anti-PM", f"count_{user.id}", 0)
         await utils.answer(message, self.strings["pm_allowed"].format(user.first_name))
 
-    async def denycmd(self, message):
-        """Используй: .deny чтобы запретить этому пользователю писать вам в личку."""
-        args = utils.get_args_raw(message)
-        reply = await message.get_reply_message()
-        if not args and not reply:
-            return await message.edit("<b>Нет аргументов или реплая.</b>")
-        try:
-            if message.is_private:
-                user = await message.client.get_entity(message.chat_id) 
-            if args:
-                if args.isnumeric(): user = await message.client.get_entity(int(args))
-                else: user = await message.client.get_entity(args)
-            else: user = await message.client.get_entity(reply.sender_id)
-        except: return await message.edit("<b>Взлом жопы.</b>")
-        self.db.set("Anti-PM", "allowed", list(set(self.db.get("Anti-PM", "allowed", [])).difference({user.id})))
-        await utils.answer(message, self.strings["pm_deny"].format(user.first_name))
-
-    async def allowedcmd(self, message):
-        """Используй: .allowed : чтобы посмотреть список пользователей которым вы разрешили писать в личку."""
-        await message.edit("ща покажу")
-        allowed = self.db.get("Anti-PM", "allowed", [])
-        number = 0
-        users = ""
-        try:
-            for _ in allowed:
-                number += 1
-                try:
-                    user = await message.client.get_entity(int(_))
-                except: pass
-                if not user.deleted:
-                    users += f"{number}. <a href=tg://user?id={user.id}>{user.first_name}</a> | [<code>{user.id}</code>]\n"
-                else:
-                    users += f"{number} • Удалённый аккаунт ID: [<code>{user.id}</code>]\n"
-            await utils.answer(message, "<b>Список пользователей которым я разрешил писать в личку:</b>\n" + users)
-        except: return await message.edit("<b>Какой то айди из списка не правильный :/</b>")
-
     async def blockcmd(self, message):
-        """Используй: .block чтобы заблокировать этого пользователя."""
+        """Используй: .block — заблокировать пользователя (реплай/аргумент)."""
         args = utils.get_args_raw(message)
         reply = await message.get_reply_message()
         if message.is_private:
@@ -129,94 +115,201 @@ class AntiPMMod(loader.Module):
             if reply:
                 user = await message.client.get_entity(reply.sender_id)
             else:
+                if not args:
+                    return await message.edit(self.strings["who_to_block"])
                 user = await message.client.get_entity(int(args) if args.isnumeric() else args)
-            if not user:
-                await utils.answer(message, self.strings["who_to_block"])
-                return
         await message.client(functions.contacts.BlockRequest(user))
         await utils.answer(message, self.strings["blocked"].format(user.first_name))
 
-    async def unblockcmd(self, message):
-        """Используй: .unblock чтобы разблокировать этого пользователя."""
-        args = utils.get_args_raw(message)
-        reply = await message.get_reply_message()
-        if message.is_private:
-            user = await message.client.get_entity(message.chat_id)
-        else:
-            if reply:
-                user = await message.client.get_entity(reply.sender_id)
-            else:
-                user = await message.client.get_entity(int(args) if args.isnumeric() else args)
-            if not user:
-                await utils.answer(message, self.strings["who_to_unblock"])
+    async def allowedcmd(self, message):
+        """Используй: .allowed — посмотреть список разрешённых пользователей."""
+        allowed = self.db.get("Anti-PM", "allowed", [])
+        if not allowed:
+            return await utils.answer(message, "<b>Список пуст.</b>")
+        text = self.strings["allowed_header"]
+        number = 0
+        for uid in allowed:
+            number += 1
+            try:
+                u = await self.client.get_entity(int(uid))
+                name = u.first_name or "User"
+                text += f"{number}. <a href=tg://user?id={u.id}>{name}</a> | <code>{u.id}</code>\n"
+            except Exception:
+                text += f"{number}. Удалённый аккаунт | <code>{uid}</code>\n"
+            # prevent too long message
+            if len(text) > 3000:
+                text += "\n<b>И т.д. (много пользователей)</b>"
+                break
+        await utils.answer(message, text)
+
+    # -------- Internal helpers & watcher --------
+    def _is_allowed(self, uid):
+        return uid in self.db.get("Anti-PM", "allowed", [])
+
+    async def _callback_query(self, event: events.CallbackQuery.Event):
+        """Обработка нажатий inline-кнопок: allow/deny/block"""
+        try:
+            data = event.data.decode() if isinstance(event.data, (bytes, bytearray)) else str(event.data)
+            # format: action_{user_id}
+            if not data:
+                await event.answer()
                 return
-        await message.client(functions.contacts.UnblockRequest(user))
-        await utils.answer(message, self.strings["unblocked"].format(user.first_name))
-
-    async def addcontcmd(self, message):
-        """Используй: .addcont чтобы добавить пользователя в свои контакты."""
-        args = utils.get_args_raw(message)
-        reply = await message.get_reply_message()
-        if message.is_private:
-            user = await message.client.get_entity(message.chat_id)
-        else:
-            if reply:
-                user = await message.client.get_entity(reply.sender_id)
-            else:
-                user = await message.client.get_entity(int(args) if args.isnumeric() else args)
-            if not user:
-                await utils.answer(message, self.strings["who_to_contact"])
+            parts = data.split("_", 1)
+            if len(parts) != 2:
+                await event.answer()
                 return
-        await message.client(functions.contacts.AddContactRequest(id=user.id, first_name=user.first_name, last_name=' ', phone='seen', add_phone_privacy_exception=False))
-        await utils.answer(message, self.strings["addcontact"].format(user.first_name))
-
-    async def delcontcmd(self, message):
-        """Используй: .delcont чтобы удалить пользователя из своих контактов."""
-        args = utils.get_args_raw(message)
-        reply = await message.get_reply_message()
-        if message.is_private:
-            user = await message.client.get_entity(message.chat_id)
-        else:
-            if reply:
-                user = await message.client.get_entity(reply.sender_id)
-            else:
-                user = await message.client.get_entity(int(args) if args.isnumeric() else args)
-            if not user:
-                await utils.answer(message, self.strings["who_to_delcontact"])
+            action, sid = parts[0], parts[1]
+            try:
+                target_id = int(sid)
+            except:
+                await event.answer("Ошибка id.", alert=True)
                 return
-        await message.client(functions.contacts.DeleteContactsRequest(id=[user.id]))
-        await utils.answer(message, self.strings["delcontact"].format(user.first_name))
 
-    async def renamecmd(self, message): 
-        args = utils.get_args_raw(message) 
-        reply = await message.get_reply_message() 
-        if not args: 
-            return await message.edit("<b>Нету аргументов.</b>") 
-        if not reply: 
-            return await message.edit("<b>Где реплай?</b>") 
-        else: 
-            user = await message.client.get_entity(reply.sender_id) 
-        try: 
-            await message.client(functions.contacts.AddContactRequest(id=user.id,  
-                                                                      first_name=args, 
-                                                                      last_name=' ', 
-                                                                      phone='мобила', 
-                                                                      add_phone_privacy_exception=False)) 
-            await message.edit(f"<code>{user.id}</code> <b>переименован(-а) на</b> <code>{args}</code>") 
-        except: return await message.edit("<b>Что то пошло не так...</b>")
+            # get user entity
+            try:
+                user = await self.client.get_entity(target_id)
+            except:
+                user = None
 
-    async def watcher(self, message): 
-        try: 
-            user = await utils.get_user(message) 
-            pm = self.db.get("Anti-PM", "pm") 
-            if message.sender_id == (await message.client.get_me()).id: return 
-            if pm is not True: 
-                if message.is_private: 
-                    if not self.get_allowed(message.from_id): 
-                        if user.bot or user.verified: 
-                            return 
-                        await utils.answer(message, self.config["custom_message"]) 
-        except: pass 
- 
-    def get_allowed(self, id): 
-        return id in self.db.get("Anti-PM", "allowed", [])
+            if action == "allow":
+                allowed = set(self.db.get("Anti-PM", "allowed", []))
+                allowed.add(target_id)
+                self.db.set("Anti-PM", "allowed", list(allowed))
+                # reset counters
+                self.db.set("Anti-PM", f"count_{target_id}", 0)
+                # edit the prompt message
+                try:
+                    await event.edit(f"✅ Разрешено писать: <a href=tg://user?id={target_id}>{user.first_name if user else target_id}</a>")
+                except:
+                    pass
+                await self.client.send_message("me", f"✅ Разрешён {user.first_name if user else target_id} ({target_id})")
+                await event.answer("Пользователь разрешён.")
+                return
+
+            if action == "deny":
+                # just note deny (do not block). keep them blocked by default (not in allowed).
+                try:
+                    await event.edit(f"❌ Отклонено: <a href=tg://user?id={target_id}>{user.first_name if user else target_id}</a>")
+                except:
+                    pass
+                await event.answer("Отклонено.")
+                return
+
+            if action == "block":
+                try:
+                    if user:
+                        await self.client(functions.contacts.BlockRequest(user))
+                    else:
+                        # fallback: try by id
+                        await self.client(functions.contacts.BlockRequest(id=target_id))
+                except Exception as e:
+                    logger.exception(e)
+                try:
+                    await event.edit(f"🔒 Заблокирован: <a href=tg://user?id={target_id}>{user.first_name if user else target_id}</a>")
+                except:
+                    pass
+                await self.client.send_message("me", f"🔒 Заблокирован {user.first_name if user else target_id} ({target_id})")
+                await event.answer("Пользователь заблокирован.")
+                return
+
+            await event.answer()
+        except Exception as e:
+            logger.exception(e)
+            try:
+                await event.answer("Произошла ошибка.", alert=True)
+            except:
+                pass
+
+    async def watcher(self, message):
+        """Слежение за входящими ЛС — авто-ответ, кнопки, счётчик и авто-блок."""
+        try:
+            # skip service messages / non private
+            if not message.is_private:
+                return
+            # skip self
+            if message.sender_id == (await self.client.get_me()).id:
+                return
+
+            pm = self.db.get("Anti-PM", "pm")  # original semantics: pm == True -> receiving allowed
+            # if receiving is allowed (pm True) => anti-PM is off
+            if pm is True:
+                return
+
+            # get user entity
+            user = await utils.get_user(message)
+            uid = message.sender_id
+
+            # bots ALWAYS allowed
+            if user and getattr(user, "bot", False):
+                allowed = set(self.db.get("Anti-PM", "allowed", []))
+                if uid not in allowed:
+                    allowed.add(uid)
+                    self.db.set("Anti-PM", "allowed", list(allowed))
+                return
+         
+            if self.auto_allow_contacts:
+                try:
+                    # check if in contacts
+                    who = await self.client.get_entity(uid)
+                    if isinstance(who, types.User) and who.contact:
+                        allowed = set(self.db.get("Anti-PM", "allowed", []))
+                        if uid not in allowed:
+                            allowed.add(uid)
+                            self.db.set("Anti-PM", "allowed", list(allowed))
+                        return
+                except Exception:
+                    pass
+
+            # if already allowed -> do nothing
+            if self._is_allowed(uid):
+                return
+
+            # increment counter
+            key = f"count_{uid}"
+            cnt = int(self.db.get("Anti-PM", key, 0)) + 1
+            self.db.set("Anti-PM", key, cnt)
+
+            # on first message -> send custom_message with buttons (and store prompt id)
+            if cnt == 1:
+                text = self.config["custom_message"]
+                try:
+                    sent = await self.client.send_message(
+                        message.chat_id,
+                        text,
+                        buttons=[
+                            [
+                                Button.inline("✅ Разрешить", f"allow_{uid}"),
+                                Button.inline("❌ Отклонить", f"deny_{uid}"),
+                                Button.inline("🔒 Заблокировать", f"block_{uid}")
+                            ]
+                        ]
+                    )
+                    # store prompt message id to optionally edit later
+                    self.db.set("Anti-PM", f"prompt_{uid}", sent.id)
+                except Exception as e:
+                    logger.exception(e)
+            # on 3rd message -> auto-block and notify you
+            if cnt >= 3:
+                # block user
+                try:
+                    await self.client(functions.contacts.BlockRequest(uid))
+                except Exception as e:
+                    logger.exception(e)
+                # reset counter and remove prompt id
+                self.db.set("Anti-PM", key, 0)
+                try:
+                    prompt_id = self.db.get("Anti-PM", f"prompt_{uid}")
+                    if prompt_id:
+                        # try to edit prompt to show blocked (best-effort)
+                        try:
+                            await self.client.edit_message(message.chat_id, prompt_id, f"🔒 Авто-блок: <a href=tg://user?id={uid}>{uid}</a>")
+                        except Exception:
+                            pass
+                        self.db.set("Anti-PM", f"prompt_{uid}", 0)
+                except Exception:
+                    pass
+                # notify you in Saved Messages
+                me_name = (await self.client.get_me()).first_name or "You"
+                await self.client.send_message("me", f"❗ <b>{user.first_name if user else uid}</b> (<code>{uid}</code>) прислал 3 сообщения и был автоматически заблокирован.")
+        except Exception as e:
+            logger.exception(e)
