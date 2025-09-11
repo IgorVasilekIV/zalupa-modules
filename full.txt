@@ -4,3 +4,4 @@ yamusic
 yg_trigger
 cfile
 silenttags
+anti-pm
