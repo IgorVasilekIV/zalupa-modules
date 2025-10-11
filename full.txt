@@ -5,3 +5,4 @@ yg_trigger
 cfile
 silenttags
 anti-pm
+readfile
