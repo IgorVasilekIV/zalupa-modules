@@ -26,8 +26,8 @@ class okakMod(loader.Module):
     strings = {
         "name": "окак"
     }
-
-    async def okakcmd(self, m):
+    @loader.command()
+    async def okak(self, m):
         """окак"""
         await utils.asyncio.sleep(1)
         self.db.set("okak", "on", not self.db.get("okak", "on", False))
@@ -36,7 +36,7 @@ class okakMod(loader.Module):
         else:
             await m.edit("не не окак <emoji document_id=5368495273578356245>😒</emoji>")
 
-    @loader.command(no_stickers=True)
+    @loader.watcher(no_stickers=True)
     async def watcher(self, m):
         if self.db.get("okak", "on", False) and m.out:
             await m.edit("окак")
