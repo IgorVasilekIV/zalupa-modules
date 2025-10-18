@@ -6,3 +6,4 @@ cfile
 silenttags
 anti-pm
 readfile
+userbotavast
