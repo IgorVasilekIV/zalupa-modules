@@ -1,5 +1,5 @@
 """
-😘 fork info: just add blockquote exp 
+😘 fork info: just add blockquote exp and eng strings
 """
 
 # -*- coding: utf-8 -*-
@@ -872,19 +872,19 @@ class UserbotAvast(loader.Module):
 
     strings = {
         "name": "UserbotAvast",
-        "cfg_ai_enabled": "Включить анализ с помощью AI (g4f)",
-        "cfg_lingva_url": "Анализирует Python-код модуля на предмет потенциальных угроз безопасности, включая обфускацию и эвристические признаки.",
-        "report_header": "<blockquote expandable><b>🛡️ Отчет об анализе безопасности модуля:</b>\n\n",
-        "critical_header": "<b>🔴 Критические угрозы:</b>\n",
-        "warning_header": "<b>🟠 Предупреждения:</b>\n",
-        "info_header": "<b>🔵 Информация:</b>\n",
-        "issue_format": "  - ⚠️ <code>{keyword}</code>: {description} (Важность: {relevance}, Строка: {line}, Позиция: {col})\n",
-        "no_issues": "✅ Не обнаружено проблем безопасности.\n",
-        "report_footer": "\nВсего обнаружено {count} проблем.\n</blockquote>",
-        "syntax_error": "❌ Ошибка синтаксиса в коде: {error}\n",
-        "loading": "⏳ Запуск анализатора безопасности...",
-        "no_module": "⚠️ Не удалось получить код модуля. Убедитесь, что ссылка верна или прикрепите файл к сообщению.",
-        "decoding_error": "⚠️ Обнаружен зашифрованный код, но не удалось его расшифровать.",
+        "cfg_ai_enabled": "Enable AI Analysis (g4f)",
+        "cfg_lingva_url": "Analyzes the module's Python code for potential security threats, including obfuscation and heuristic signs.",
+        "report_header": "<blockquote expandable><b>🛡️ Security Analysis Report for the Module:</b>\n\n",
+        "critical_header": "<b>🔴 Critical Threats:</b>\n",
+        "warning_header": "<b>🟠 Warnings:</b>\n",
+        "info_header": "<b>🔵 Information:</b>\n",
+        "issue_format": "  - ⚠️ <code>{keyword}</code>: {description} (Importance: {relevance}, Line: {line}, Column: {col})\n",
+        "no_issues": "✅ No security issues found.\n",
+        "report_footer": "\nTotal issues found: {count}\n</blockquote>",
+        "syntax_error": "❌ Syntax error in code: {error}\n",
+        "loading": "⏳ Starting security analyzer...",
+        "no_module": "⚠️ Unable to retrieve module code. Please ensure the link is correct or attach the file to the message.",
+        "decoding_error": "⚠️ Encoded code detected but failed to decode.",
     }
 
     strings_ru = {

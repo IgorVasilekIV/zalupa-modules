@@ -1,9 +1,8 @@
 antimatmod
 uwufetchmod
 yamusic
-yg_trigger
 cfile
 silenttags
-anti-pm
 readfile
 userbotavast
+ksenonafk
