@@ -48,7 +48,7 @@ class femboy(loader.Module):
 
         await utils.answer(message, self.strings["f_on"])
 
-    @loader.watcher(only_messages=True, no_commands=True, no_stickers=True, no_forwards=True,)
+    @loader.watcher(only_messages=True, no_commands=True, no_stickers=True, no_forwards=True, no_inline=True)
     async def watcher(self, event):
         try:
             if event.sender_id != self.tg_id:
@@ -63,4 +63,6 @@ class femboy(loader.Module):
             word + (f" {random.choice(self.config['emojies'])}" if random.random() > 0.5 else "")
             for word in words
         )
-        await event.edit(text=modified_text+f" {utils.ascii_face()}")
+        ascii = f" {utils.ascii_face()}" if random.random() > 0.6 else ""
+
+        await event.edit(text=modified_text + ascii)
