@@ -6,3 +6,4 @@ okak
 fakeneofetch
 archaur
 diceevent
+pcard

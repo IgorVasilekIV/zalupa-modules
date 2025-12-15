@@ -7,3 +7,5 @@
 [urbandictionary](https://github.com/IgorVasilekIV/zalupa-modules/blob/main/ud.py): Наконец-то сделать перевод по инлайн кнопке
 
 [???](https://github.com/IgorVasilekIV/zalupa-modules/blob/main/???): Модуль который при упоминании <b>определённого</b> слова будет отвечать и/или логировать это (последнее как в silent-tags)
+
+[PCard](https://github.com/IgorVasilekIV/zalupa-modules/blob/main/pcard.py): Авто-продажа/апргейд/авито после ткарточки (в кфг)
