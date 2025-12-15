@@ -8,4 +8,4 @@
 
 [???](https://github.com/IgorVasilekIV/zalupa-modules/blob/main/???): Модуль который при упоминании <b>определённого</b> слова будет отвечать и/или логировать это (последнее как в silent-tags)
 
-[PCard](https://github.com/IgorVasilekIV/zalupa-modules/blob/main/pcard.py): Авто-продажа/апргейд/авито после ткарточки (в кфг)
+[PCard](https://github.com/IgorVasilekIV/zalupa-modules/blob/main/pcard.py): Авто-продажа/апргейд/авито после ткарточки (в кфг). Для <b>олигархов</b>, кфг на кд 2ч
