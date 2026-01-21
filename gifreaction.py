@@ -1,3 +1,4 @@
+__version__ = (1, 0, 1)
 # meta developer: @l0_ng, @IgorVasilekIV <-(кто это)
 #
 # The module is made as a joke, all coincidences are random :P
@@ -67,24 +68,36 @@ class GifReaction(loader.Module):
             ru_doc="<текст | айди гифки> / [реплай на гифку] - Добавить реакцию"
     )
     async def addgif(self, message: Message):
-        """<текст | айди гифки> / [реплай на гифку] - Добавить реакцию"""
-        reply = await message.get_reply_message()
-        if reply and reply.media:
-            if hasattr(reply.media, 'document'):
-                gif_id = str(reply.media.document.id)
-            else:
-                return await utils.answer(message, self.strings["not_gif"])
-        else:
-            args = utils.get_args_raw(message).split("|", 1)
-            if len(args) < 2:
-                return await utils.answer(message, self.strings["no_args"])
-            gif_id = args[1].strip()
-        
-        reactions = self._db.get(self.strings["name"], "reactions", {})
-        reactions[gif_id] = args
-        self._db.set(self.strings["name"], "reactions", reactions)
+            """<текст | айди гифки> / [реплай на гифку] - Добавить реакцию"""
+            reply = await message.get_reply_message()
+            raw_args = utils.get_args_raw(message)
+            
+            gif_id = None
+            text_reaction = None
 
-        await utils.answer(message, self.strings["added"].format(gif_id, args))
+            if reply and reply.media:
+                if hasattr(reply.media, 'document'):
+                    gif_id = str(reply.media.document.id)
+                    text_reaction = raw_args
+                else:
+                    return await utils.answer(message, self.strings["not_gif"])
+            else:
+                if not raw_args or "|" not in raw_args:
+                    return await utils.answer(message, self.strings["no_args"])
+                
+                parts = raw_args.split("|", 1)
+                text_reaction = parts[0].strip()
+                gif_id = parts[1].strip()
+
+            if not gif_id or not text_reaction:
+                return await utils.answer(message, self.strings["no_args"])
+
+            reactions = self._db.get(self.strings["name"], "reactions", {})
+            reactions[gif_id] = text_reaction
+            self._db.set(self.strings["name"], "reactions", reactions)
+
+            await utils.answer(message, self.strings["added"].format(gif_id, text_reaction))
+
     @loader.command(
             en_doc="[gif_id] / [reply to gif] - Remove a reaction",
             ru_doc="[айди гифки] / [реплай на гифку] - Удалить реакцию"
@@ -123,7 +136,7 @@ class GifReaction(loader.Module):
             en_doc="- Show the list of saved reactions",
             ru_doc="- Показать список сохраненных реакций"
     )
-    async def listgifs(self, message: Message):
+    async def giflist(self, message: Message):
         """- Показать список сохраненных реакций"""
         reactions = self._db.get(self.strings["name"], "reactions", {})
         if not reactions:
