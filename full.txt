@@ -7,3 +7,4 @@ fakeneofetch
 archaur
 diceevent
 pcard
+gifreaction
