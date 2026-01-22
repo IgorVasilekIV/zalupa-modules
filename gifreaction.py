@@ -1,5 +1,12 @@
+"""
+Some description:
+Auto-reply to specific GIFs ☃️
+"""
+
+
 __version__ = (1, 0, 1)
 # meta developer: @l0_ng, @IgorVasilekIV <-(кто это)
+# meta fhsdesc: gif, auto, reply, reaction, usefull
 #
 # The module is made as a joke, all coincidences are random :P
 # 

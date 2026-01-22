@@ -1,6 +1,14 @@
+"""
+Some description: # english
+Module for automatically sending 'ткарточка' every 3 hours in the chat where it was launched (yes)
+"""
+
+__version__ = (1, 2)
+
 # meta banner: https://x0.at/tGxk.jpg
 # meta pic: https://x0.at/tGxk.jpg
 # meta developer: @HikkaZPM
+# meta fhsdesc: auto, timer, chat, useful
 #
 # The module is made as a joke, all coincidences are random :P
 # 
@@ -16,6 +24,7 @@
 # 
 
 # код делала ИИ, не выёбывайтесь 🤔
+# Сделаю потом, не беспокойтесь 🤗
 
 import asyncio
 import logging

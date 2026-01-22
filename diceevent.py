@@ -1,6 +1,24 @@
-__version__: (1, 3, 5)
+"""
+Some description:
+Event who rolls the highest number on a dice
+"""
+
+__version__ = (1, 3, 5)
 
 # meta developer: @HikkaZPM
+# meta fhsdeck: dice, event, game, chat
+#
+# The module is made as a joke, all coincidences are random :P
+#
+#       кот вахуи
+#       /\_____/\
+#      /  o   o  \
+#     ( ==  ^  == )
+#      )         (
+#     (           )
+#    ( (  )   (  ) )
+#   (__(__)___(__)__)
+#
 
 from .. import loader, utils
 import asyncio
@@ -10,11 +28,11 @@ from telethon.tl.types import InputMediaDice
 
 @loader.tds
 class DiceEventMod(loader.Module):
-    """Event who rolls the highest number on a dice\nJoin to our chat to test it! https://t.me/+3a0rnYFY5Ew4NGVi"""
+    """Event who rolls the highest number on a dice\n\nBe sure to enable `.tsec chat DiceEventMod` and `.nonickchat` to 'on' before starting the game"""
 
     strings = {
         "name": "DiceEvent",
-        "_cls_doc": "Event who rolls the highest number on a dice",
+        "_cls_doc": "Event who rolls the highest number on a dice\n\nBe sure to enable `.tsec chat DiceEventMod` and `.nonickchat` to 'on' before starting the game",
         "_cfg_waiting_participants": "Timeout for joining to game",
         "event_already_started": "⚠️ Event is already running — wait for the end.",
         "event_started": "🎲 Event started: type <code>{prefix}join</code> within {timeout} seconds to join.",
@@ -27,7 +45,7 @@ class DiceEventMod(loader.Module):
         "join_already": "⚠️ You're already in the game."
     }
     strings_ru = {
-        "_cls_doc": "Ивент кому выпадет больше число на кубике\nЗаходи в наш чат протестить! https://t.me/+3a0rnYFY5Ew4NGVi",
+        "_cls_doc": "Ивент кому выпадет больше число на кубике\n\nОбязательно включите .tsec chat DiceEventMod и .nonickchat на 'включено' перед началом игры",
         "_cfg_waiting_participants": "Время ожидания участников в игру",
         "event_already_started": "⚠️ Ивент уже идёт — подожди завершения.",
         "event_started": "🎲 Ивент начался: пишите <code>{prefix}join</code> в течение {timeout}с. что бы присоеденится.",

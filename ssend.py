@@ -1,3 +1,9 @@
+"""
+Some description:
+Simple module to send any text
+"""
+
+
 # чатгпт кормит, больные мозги тоже
 #
 # meta developer: @HikkaZPM

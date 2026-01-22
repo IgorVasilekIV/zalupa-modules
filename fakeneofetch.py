@@ -4,6 +4,7 @@ fake/custom fetch for rofls 🙂
 """
 # ИИшка кормит, больные мозги тоже
 #
+# meta fhsdesc: neofetch, fastfetch, systeminfo, sysinfo
 # meta developer: @HikkaZPM
 #
 # The module is made as a joke, all coincidences are random :P

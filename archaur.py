@@ -7,6 +7,7 @@ __version__ = (1, 2)
 
 # meta banner: https://files.catbox.moe/u91fwo.jpg
 # meta developer: @HikkaZPM
+# meta fhsdesc: aur, archlinux, search, packages, usefull
 #
 # The module is made as a joke, all coincidences are random :P
 # 

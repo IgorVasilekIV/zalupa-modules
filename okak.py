@@ -1,3 +1,10 @@
+"""
+Some description:
+Just replaces your messages with "окак" (Russian meme) 🤔
+"""
+
+
+# meta fhsdesc: fun, meme, edit, zalupa
 # чатгпт кормит, больные мозги тоже
 #
 # meta banner: https://0x0.st/s/gJtVZxi43-Zy4q2je-yx-A/8XdP.gif

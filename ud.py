@@ -1,7 +1,10 @@
+__version__ = (1, 0, 0)
+
 # чатгпт кормит, больные мозги тоже
 #
 # meta banner: https://files.catbox.moe/swqxd1.png
 # meta developer: @HikkaZPM
+# meta fhsdeck: search, dictionary, slang
 #
 # The module is made as a joke, all coincidences are random :P
 #

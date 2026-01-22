@@ -1,4 +1,18 @@
 # meta developer: @MrAmigoch for @HikkaZPM
+# meta fhsdeck: fun, edit, auto
+#
+# The module is made as a joke, all coincidences are random :P
+#
+#       кот вахуи
+#       /\_____/\
+#      /  o   o  \
+#     ( ==  ^  == )
+#      )         (
+#     (           )
+#    ( (  )   (  ) )
+#   (__(__)___(__)__)
+#
+
 # здравствуйте @Hicota 👋😐
 # А так же спасибо, что дал повод доделать модуль
 
