@@ -1,4 +1,4 @@
-# meta developer: @MrAmigoch for @HikkaZPM
+# meta developer: Amigoch for @HikkaZPM
 # meta fhsdeck: fun, edit, auto
 #
 # The module is made as a joke, all coincidences are random :P
