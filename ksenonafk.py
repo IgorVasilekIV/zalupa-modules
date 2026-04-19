@@ -111,6 +111,12 @@ class KsenonAFKMod(loader.Module):
                 [],
                 lambda: "Список ID чатов, в которых не будут отправляться AFK сообщения",
                 validator=loader.validators.Series(validator=loader.validators.TelegramID())
+            ),
+            loader.ConfigValue(
+                "deleteResponseTime",
+                3.5,
+                lambda: "Время в секундах, через которое будет удаляться AFK ответ\nЕсли 0 то не будет удаляться",
+                validator=loader.validators.Float()
             )
 
         )
@@ -229,8 +235,9 @@ class KsenonAFKMod(loader.Module):
 
         await utils.answer(message, self.strings["back"])
 
-        await asyncio.sleep(2)
-        await message.delete()
+        await asyncio.sleep(self.config["deleteResponseTime"])
+        if self.config["deleteResponseTime"] > 0:
+            await message.delete()
 
     @loader.command(ru_doc="<кол-во> <минуты> - Установить ограничение сообщений в чате")
     async def ignorusers(self, message):
