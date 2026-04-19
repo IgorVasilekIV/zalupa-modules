@@ -235,9 +235,8 @@ class KsenonAFKMod(loader.Module):
 
         await utils.answer(message, self.strings["back"])
 
-        await asyncio.sleep(self.config["deleteResponseTime"])
-        if self.config["deleteResponseTime"] > 0:
-            await message.delete()
+        await asyncio.sleep(3.5)
+        await message.delete()
 
     @loader.command(ru_doc="<кол-во> <минуты> - Установить ограничение сообщений в чате")
     async def ignorusers(self, message):
@@ -342,8 +341,9 @@ class KsenonAFKMod(loader.Module):
             response = self._format_custom_message(str(diff), reason, return_time)
             
             msg = await utils.answer(message, response, reply_to=message)
-            await asyncio.sleep(3.5)
-            await msg.delete()
+            await asyncio.sleep(self.config["deleteResponseTime"])
+            if self.config["deleteResponseTime"] > 0:
+                await msg.delete()
 
 
     def get_afk(self):
